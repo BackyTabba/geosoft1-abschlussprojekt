@@ -13,7 +13,16 @@ var worldStreetMap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/se
     attribution: ''
 });
 
+var baseMaps = {
+  "Satellite": satelliteMap,
+  "Topographic": topoMap,
+  "WSM": worldStreetMap
+};
+
 var benutzerFahrtMap = L.map('mapNeueFahrt', {
-  layers: [topoMap]
-})
+  layers: [satelliteMap]
+});
+
+L.control.layers(baseMaps).addTo(benutzerFahrtMap);
+
 benutzerFahrtMap.locate({ setView: true, maxZoom: 20 });
