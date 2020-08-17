@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Registration</title>
+</head>
+<body>
+
+<!-- The main pane. -->
+<div class="pane">
+    <h2>Registration</h2>
+    <form>
+      <label for="registrationName">Name:</label><br>
+      <textarea id="registrationName"></textarea><br>
+      
+      <label for="loginPasswort">Passwort:</label><br>
+      <textarea id="loginPasswort"></textarea><br>
+      <input type='button' id='registrationBtn' value="Submit">
+      <input type='button' id="gotoRegBtn" value="Create new Account" href="registration.html">
+    </form>
+</div>
+<h3> Table of coordinates, sorted in ascending order by distance to point above</h3>
+<table id="table" cellpadding="2" cellspacing="2" border="1">
+  <thead>
+      <th>Coordinate</th>
+      <th>Distance in km</th>
+      <th>Initial Bearing from point</th>
+  </thead>
+  <tbody>
+    <tr>
+    </tr>
+  </tbody>
+</table>
+
+<!-- Adding the JavaScript code. -->
+<script src="js/point.js"></script>
+<script src="js/pointcloud.js"></script>
+<script src="js/client.js"></script>
+</body>
+</html>
