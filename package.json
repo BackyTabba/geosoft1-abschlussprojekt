@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/BackyTabba/geosoft1-abschlussprojekt#readme",
   "dependencies": {
+    "bootstrap": "^4.5.0",
     "express": "^4.17.1",
     "leaflet": "^1.6.0",
     "mongo": "^0.1.0"
