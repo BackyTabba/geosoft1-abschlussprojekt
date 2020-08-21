@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -17,8 +18,15 @@
   },
   "homepage": "https://github.com/BackyTabba/geosoft1-abschlussprojekt#readme",
   "dependencies": {
+    "bcrypt": "^5.0.0",
+    "config": "^3.3.1",
+    "cookie-parser": "^1.4.5",
     "express": "^4.17.1",
+    "joi": "^17.2.1",
+    "jsonwebtoken": "^8.5.1",
     "leaflet": "^1.6.0",
-    "mongo": "^0.1.0"
+    "mongo": "^0.1.0",
+    "mongodb": "^3.6.0",
+    "mongoose": "^5.10.0"
   }
 }
