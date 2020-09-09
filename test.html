@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<html>
+
+<head>
+    <title>Geosoftware Übung 1</title>
+</head>
+<body>
+<h1>Distanzberechnung</h1>
+<!--<input id="temptext" name="temptext" type="text" hidden="true">-->
+<p id="RadioSet" name="RadioSet">
+    <input type="radio" id="gj" name="RadioGroup" value="GeoJSON" onclick="return selGJ()">
+    <label for="gj"> GeoJSON</label>
+    <input type="radio" id="co" name="RadioGroup" value="Coordinates" onclick="return selCO()" checked>
+    <label for="co"> Coordinates</label>
+</p>
+<form name="myform" onsubmit="return false">
+    <p name="labloc" id="labloc" hidden="true">Your Position is <a name="loc" id="loc"></a></p>
+Bitte Punkt eingeben <input type="text" id="Nameenter" name="Nameenter" value="51.969508 , 7.595737" pattern="\d{1,2}\.\d{6} ?, ?\d{1,2}\.\d{6}" treatment="MakePoint" onKeyPress="onEnter(event)">
+</form>
+<button onclick="AddPoint()">Add Point</button>
+<button onclick="getLocation()">Load Location</button>
+<button id="votebutton" onclick="setTimeout(getClosestStops(), 4000)">Get closest busstops</button>
+<!--<button  onclick="setTimeout(console.log('No Timeout'), 4000)">Get closest busstops</button>-->
+
+
+
+    <p>Bezogen auf den Ausgangspunkt: <i><b><a id="point"></a></b></i></p>
+<p id="result"></p>
+<p id="result2">Hier</p>
+<div id="content"></div>
+<div id="content2"></div>
+</body>
+
+<script src="api.js"></script>
+<script src="point.js"></script>
+<script src="pointcloud.js"></script>
+<script src="pointcontent.js"></script>
+<script src="ue2.js"></script>
+<script src="ue3.js"></script>
+
+</html>
