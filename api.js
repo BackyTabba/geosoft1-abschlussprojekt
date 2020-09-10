@@ -39,23 +39,39 @@ function showStops(response) {
   var ApiData = JSON.parse(response.responseText);
   var ApiArray = [];
   for (g of ApiData.stopPoints) {
-      ApiArray[ApiArray.length] = [g.commonName, coordinates1 = [g.lat,g.lon]];
+    if(g.modes.includes("tube") == true){
+      ApiArray[ApiArray.length] = [g.commonName, coordinates1 = [g.lat,g.lon], g.id];
+    }
   }
+  console.log(ApiArray);
+  addMarkers(ApiArray);
 
-    var index=0;
-    for (f of ApiArray) {
-      outres=f[0] + f[1];
-
-      var subresult = document.createElement("div");
-      subresult.id="stop"+index;
-      var node = document.createTextNode(outres);
-      subresult.appendChild(node);
-      var element = document.getElementById("content2");
-      element.appendChild(subresult);
-      index++;
-      }
+}
+function getArrivals(id){
+  var apikey2 = "https://api.tfl.gov.uk/StopPoint/"+id+"/arrivals"
+  openRequest(apikey2, showArrivals);
 }
 
+function showArrivals(response){
+  var ApiData2 = JSON.parse(response.responseText);
+  var ApiArray2 = [];
+  for (g of ApiData2) {
+      ApiArray2[ApiArray2.length] = [g.lineName, g.destinationName, g.expectedArrival, g.vehicleId];
+    }
+  console.log(ApiArray2);
+  var index=0;
+  for (f of ApiArray2) {
+    outres=f[0]+"  "+f[1]+"  "+f[2]+"  "+f[3];
+
+    var subresult = document.createElement("div");
+    subresult.id="stop"+index;
+    var node = document.createTextNode(outres);
+    subresult.appendChild(node);
+    var element = document.getElementById("content2");
+    element.appendChild(subresult);
+    index++;
+    }
+}
 function errorcallback(e) {
 
     document.getElementById("content").innerHTML = "errorcallback: check web-console";
