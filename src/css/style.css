@@ -1,1 +1,3 @@
-#mapNeueFahrt { height: 180px; }
+#mapNeueFahrt { height: 420px; }
+#mapBisherigeFahrten { height: 420px; }
+#anzeigeAbfahrten { display: none;}

@@ -18,11 +18,3 @@ var baseMaps = {
   "Topographic": topoMap,
   "WSM": worldStreetMap
 };
-
-var benutzerFahrtMap = L.map('mapNeueFahrt', {
-  layers: [satelliteMap]
-});
-
-L.control.layers(baseMaps).addTo(benutzerFahrtMap);
-
-benutzerFahrtMap.locate({ setView: true, maxZoom: 20 });
