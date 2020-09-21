@@ -12,15 +12,18 @@ const session = require("express-session")
 const flash = require("express-flash")
 const methodOverride = require("method-override")
 const mongoose = require("mongoose");
+const mail = require('sendmail')();
 
 //connect to mongodb
 mongoose
-    .connect("mongodb://127.0.0.1:27017/corona-app", { useNewUrlParser: true })
+    .connect("mongodb://127.0.0.1:27017/corona-app", { useNewUrlParser: true , useUnifiedTopology: true })
     .then(() => console.log("Connected to MongoDB..."))
     .catch(err => console.error("Could not connect to MongoDB..."));
 
 //initialzie Passport
-const initializePassport = require("./passport-config")
+//lalala
+const initializePassport = require("./passport-config");
+const { User } = require("./models/user.model");
 initializePassport(
     passport,
     name=> users.find(user => user.name === name),
@@ -45,6 +48,7 @@ app.get('/',checkAuthenticated,checkArzt,checkArzt,(req,res)=>{
     res.sendFile(__dirname+"/src/html/index.html")
     })
 
+app.post("/arzt/risikofahrt",risikoFahrt);
 app.get("/login",checkNotAuthenticated,(req,res)=>{
     res.sendFile(__dirname+"/src/html/login.html");
 })
@@ -77,6 +81,34 @@ app.delete("/logout",(req,res)=>{
     res.redirect("/login")
 })
 
+
+function risikoFahrt(req,res,next){
+   //1)
+   ID=req.ID;
+    /*[Datenbankschnittstelle Fahrt]*/ a=Fahrt.find(Fahrt.ID==ID)
+    a.update(Risiko)=true
+    //2)
+    /*[Datenbankschnittstelle für GastFahrten]*/ b=GastFahrten.find(FahrtID=a.ID)
+    for(x in b){
+        /*[Datenbankschnittstelle für User]*/ User.find(x.GastID).IsInfiziert=true;
+        mail({
+            from: 'noreply@meinedomain.com',
+            to: User.Email,
+            subject: 'Teilnahme an eine Risikofahrt',
+            content: 'Sie sind möglicherweise Infiziert! Bitte machen Sie einen Test!'
+        },
+        function(err,response){
+           if(err){
+              console.log(err);
+           }
+           console.dir(response);
+     });
+    }
+    return next();
+}
+
+
+
 function checkAuthenticated(req, res, next) {
     if (req.isAuthenticated()) {
       return next()
@@ -95,6 +127,7 @@ function checkAuthenticated(req, res, next) {
     }
     next()
   }
+
   function checkArzt(req,res,next) {
       console.log(req.user.role)
       if(req.user.role==undefined) req.user.role="User"

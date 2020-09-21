@@ -259,5 +259,5 @@ tags
 # End of https://www.gitignore.io/api/node,vim,git,macos,linux,sublimetext
 
 src/tokens.js
-mongodb/data/journal/
+mongodb/data/
 .env

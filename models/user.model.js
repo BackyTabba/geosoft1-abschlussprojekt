@@ -3,7 +3,16 @@ const Joi = require('joi');
 const mongoose = require('mongoose');
 
 //simple schema
+
+
 const UserSchema = new mongoose.Schema({
+  ID: {
+    type: Number,
+    required: true,
+    unique:true,
+    minlength: 3,
+    maxlength: 50
+  },
   name: {
     type: String,
     required: true,
@@ -24,7 +33,9 @@ const UserSchema = new mongoose.Schema({
     maxlength: 255
   },
   //give different access rights if admin or not 
-  isAdmin: Boolean
+  isAdmin: Boolean,
+  IsArzt: Boolean,
+  IsInfiziert:Boolean
 });
 
 
