@@ -4,12 +4,12 @@ Wir haben vorab recht viel geplant. Die Planung des Nutzerinterfaces und der Zus
 (soweit das damals abzusehen war) haben wir in Bildern bzw der im Hauptverzchnis liegenden draw.io Datei dokumentiert.
 Hauptsächlich haben wir folgende Aufteilung vorgenommen:
 
-Jonas:
+# Jonas
 
-Joshua:
+# Joshua
 HTML Seiten, JS-Dateien, API-Zugang und API Datenverarbeitung, Leaflet Karten und Darstellungen
 
-Lennart:
+# Lennart
 Backbone(node.js): Server.js,passport-config, db.js: mongodb(mongoose), Passport/Login, Routes
 
 
