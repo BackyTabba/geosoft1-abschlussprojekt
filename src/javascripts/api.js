@@ -102,6 +102,7 @@ function showArrivals(response){
     var btnChoose = document.createElement("button");
     node = document.createTextNode("Diese Fahrt nehmen");
     btnChoose.addEventListener("click", takeDrive);
+    btnChoose.class ="btn btn-primary";
     btnChoose.appendChild(node);
     tableChoose.appendChild(btnChoose);
     var currentRow = document.getElementById("abfahrt"+index);
