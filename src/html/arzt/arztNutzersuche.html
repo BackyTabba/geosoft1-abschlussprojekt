@@ -2,23 +2,79 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width= device-width, initial-scale=1">
     <title>Benutzersuche</title>
+    <style>
+        body{
+            margin: 30px;
+            background-color: lightgrey;
+        }
+        h1{
+            color: navy;
+            margin-left: 50px;
+            font-size: 40px;
+        }
+
+        h2{
+            margin-left: 500px;
+            font-size: 30px;
+        }
+        
+
+        .my-container {
+            border: 1px solid black;
+        }
+        
+        }
+        .my-col{
+            border: 3px solid black;
+        }
+
+        .table-image{
+            td, th{
+                vertical-align: middle;
+            }
+        }
+    </style>
 </head>
 <body>
-    <form>
+   <h1 style="font-size: 4vw; text-align: center;" >Nutzersuche</h1> 
+   <div class="container my-container">
+    <div class="row">
+     <div class="col my-col col--md-12 col--sm-6">
+      <form>
         <label for="sucheName">Name</label><br>
         <textarea id="sucheName"></textarea><br>
         <input type='button' id='loginBtn' value="Submit">
       </form>
+     </div>
+    </div>
+   </div>
+<br><br>  
 <div id="Nutzerausgabe">
-<h2> Nutzer</h2>
-    <table id="tableNutzer" cellpadding="2" cellspacing="2" border="1">
-    <thead>
-    </thead>
-    <tbody>
-    </tbody>
-    </table>
-</div>
-
+<h1 style="font-size: 3vw; text-align: center;"> Nutzer</h1>
+    <div class="container my-container">
+  	 <div class="table-responsive">
+  	  <div class="row">
+  		<div class="col-12">
+         <table id="tableNutzer" class="table table-bordered" cellpadding="2" cellspacing="2" border="1">
+          <thead>
+           <tr>
+    		 <th scope="col">ID</th>
+    		 <th scope="col">Name</th>
+    		 <th scope="col">Vorname</th>
+    		 <th scope="col">Arzt</th>
+    	    </tr>
+              
+          </thead>
+          <tbody>
+          </tbody>
+          </table>
+         </div>   
+        </div>
+       </div>
+    </div>
+   </div> 
 </body>
 </html>
