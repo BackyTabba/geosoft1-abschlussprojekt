@@ -13,6 +13,12 @@ HTML Seiten, JS-Dateien, API-Zugang und API Datenverarbeitung, Leaflet Karten un
 Backbone(node.js): Server.js,passport-config, db.js: mongodb(mongoose), Passport/Login, Routes
 
 
+
+
+
+#
+
+
 ![BildNr1](/images/GS1.png)
 ![BildNr2](/images/GS2.png)
 ![BildNr3](/images/GS3.png)
