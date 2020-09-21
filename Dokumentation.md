@@ -5,8 +5,7 @@ Hauptsächlich haben wir folgende Aufteilung vorgenommen:
 Jonas:
 
 Joshua:
-
 HTML Seiten, JS-Dateien, API-Zugang und API Datenverarbeitung, Leaflet Karten und Darstellungen
-Lennart:
 
+Lennart:
 Backbone(node.js): Server.js,passport-config, db.js: mongodb(mongoose), Passport/Login, Routes
