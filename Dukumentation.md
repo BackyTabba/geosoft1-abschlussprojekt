@@ -1,4 +1,6 @@
 Die Rückwirkende Dokumentation vor der Zusammenlegung gestaltet sich etwas schwierig, da wir die Teile weiterentwickelt haben.
+Wir haben vorab recht viel geplant. Die Planung des Nutzerinterfaces und der Zusammengehörigkeit der einzelnen Komponenten 
+(soweit das damals abzusehen war) haben wir in Bildern bzw draw.io Datei dokumentiert.
 Hauptsächlich haben wir folgende Aufteilung vorgenommen:
 Jonas:
 
