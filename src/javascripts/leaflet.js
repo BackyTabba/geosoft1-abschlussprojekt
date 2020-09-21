@@ -1,4 +1,4 @@
-//initialize leaflet with links for different basemaps
+//Initialisieren der Leaflet-Karte mit drei Basemaps
 var mapLink = '<a href="http://www.esri.com/">Esri</a>';
 
 var satelliteMap = L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
@@ -18,11 +18,3 @@ var baseMaps = {
   "Topographic": topoMap,
   "WSM": worldStreetMap
 };
-
-var benutzerFahrtMap = L.map('mapNeueFahrt', {
-  layers: [satelliteMap]
-});
-
-L.control.layers(baseMaps).addTo(benutzerFahrtMap);
-
-benutzerFahrtMap.locate({ setView: true, maxZoom: 20 });
