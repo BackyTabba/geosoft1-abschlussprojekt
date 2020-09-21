@@ -261,3 +261,4 @@ tags
 src/tokens.js
 mongodb/data/*
 .env
+package-lock
