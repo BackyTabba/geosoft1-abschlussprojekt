@@ -2,9 +2,44 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width= device-width, initial-scale=1">
     <title>Neue Fahrt</title>
+    <style>
+      body{
+            margin: 30px;
+            background-color: lightgrey;
+        }
+        h1{
+            color: navy;
+            margin-left: 50px;
+            font-size: 40px;
+        }
+
+        h2{
+            margin-left: 50px;
+            font-size: 30px;
+        }
+        
+
+        .my-container {
+            border: 1px solid black;
+        }
+        
+        }
+        .my-col{
+            border: 3px solid black;
+        }
+
+        .table-image{
+            td, th{
+                vertical-align: middle;
+            }
+        }
+    </style>
 </head>
 <body>
+   <h1 style="font-size:4vw; text-align: center; ">Bisherige Fahrten</h1> 
     <form>
         <label for="vonEingabe">von</label><br>
         <textarea id="vonEingabe"></textarea><br>
@@ -16,13 +51,26 @@
 <div id="mapBisherigeFahrten"></div>
 <h2> Neue Fahrt</h2>
 <div id="tableFahrten">
-<h2> Bisherige Fahrten</h2>
-    <table id="tableBisherigeFahrten" cellpadding="2" cellspacing="2" border="1">
-    <thead>
-    </thead>
-    <tbody>
+<h2 style="font-size:2vw; text-align: center;"> Ihre bisherigen Fahrten von dieser Station</h2>
+    <div class="container my-container">
+     <div class="table-responsive">
+      <div class="row">
+       <div class="col col--md-12 col--sm-6"> 
+    <table class="table table-bordered" id="tableBisherigeFahrten"  cellpadding="2" cellspacing="2" border="1">
+     <thead>
+         <th scope="col">Linie</th>
+         <th scope="col">Richtung/Endstation</th>
+         <th scope="col">Einstieg</th>
+         <th scope="col">Einstiegszeit</th>
+         <th scope="col">Ausstieg</th>
+     </thead>
+    <tbody id="tableBody">
     </tbody>
     </table>
+   </div>
+  </div>
+ </div>
+</div>
 </div>
 
 </body>
