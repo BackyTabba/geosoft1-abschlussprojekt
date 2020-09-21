@@ -95,7 +95,7 @@ app.delete("/logout",(req,res)=>{
 
 
 
-
+//Vorläufige Struktur der Benachrichtigung, wenn alle Datenbankschnittstellen laufen
 function risikoFahrt(req,res,next){
    //1)
    ID=req.ID;
@@ -122,12 +122,12 @@ function risikoFahrt(req,res,next){
 }
 
 
-
+//Check if Authenticated, Überarbeitung um auch Admin,User und Arzt abzudecken steht aus 
 function checkAuthenticated(req, res, next) {
     if (req.isAuthenticated()) {
       return next()
     }
-
+    //https://github.com/jaredhanson/passport/issues/482
     req.session.save(() => {res.redirect("/login")})
   }
 
@@ -148,7 +148,7 @@ function checkAuthenticated(req, res, next) {
       req.session.save();
       next();
   }
-  //Bitte ignorieren, zukünftige Funktionen:
+  //Bitte ignorieren, zukünftige Funktionen:---------------------------
   //https://stackoverflow.com/questions/28741062/how-can-you-define-multiple-isauthenticated-functions-in-passport-js
   /*  function allowAdmins(req, res, next) {
         if (req.user.role === 'Admin') return next();
@@ -161,7 +161,7 @@ function checkAuthenticated(req, res, next) {
       }*/
 
 
-
+//------------------------------------------------
       process.on("SIGTERM", () => {
         server.close();
         app.locals.dbConnection.close();
