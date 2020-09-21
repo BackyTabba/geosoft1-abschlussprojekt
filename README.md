@@ -29,8 +29,8 @@ https://github.com/BackyTabba/geosoft1-abschlussprojekt.git
 
 ### Start der APP
 ***
-$ npm install
-$ npm start
+* $ npm install
+* $ npm start
 
 ### Autorennamen
 ***
