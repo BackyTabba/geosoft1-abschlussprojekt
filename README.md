@@ -48,6 +48,7 @@ Die Autoren sind:
 
 ### Nutzer- Gebrauchsanweisungen
 ***
+.env Datei hinzufügen mit Inhalt SESSION_SECRET=ChangeMe
 
 ### Verwendete Bibliotheken/ Frameworks
 ***
@@ -57,13 +58,11 @@ Die Autoren sind:
 * express: Version 4.17.1
 * leaflet: Version 1.6.0
 * bcrypt: Version 5.0.0
-* config: Version 3.3.1
 * cookie-parser: Version 1.4.5
 * dotenv: Version 8.2.0
 * express-flash: Version 0.0.2
 * express-session: Version 1.17.1
 * joi: Version 17.2.1
-* jsonwebtoken: Version 8.5.1
 * method-override: Version 3.0.0
 * mongo: Version 0.1.0
 * mongodb: Version 3.6.0
@@ -75,6 +74,3 @@ Die Autoren sind:
 
 ### Zusatzfeatures/Besonderheiten
 ***
-### Vorzunehmende Änderungen
-***
-.env Datei hinzufügen mit SESSION_SECRET= ChangeMe
