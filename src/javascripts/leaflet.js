@@ -1,4 +1,4 @@
-//initialize leaflet with links for different basemaps
+//Initialisieren der Leaflet-Karte mit drei Basemaps
 var mapLink = '<a href="http://www.esri.com/">Esri</a>';
 
 var satelliteMap = L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {

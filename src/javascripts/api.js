@@ -35,7 +35,11 @@ function statechangecallback(func,x,z) { //mit parameter response
     //console.dir(x);
     return actualcallback;
 }
-
+/**
+ * @desc Funktion um die erhaltenen MetroStations aus der API zu filtern und in ein Array zu füllen
+ *
+ * @param response
+ */
 function showStops(response) {
 
   //View auf London setzen
@@ -43,7 +47,9 @@ function showStops(response) {
 
   var ApiData = JSON.parse(response.responseText);
   for (g of ApiData.stopPoints) {
+    //nur MetroStations nehmen, an denen eine Linie des Typs "tube" fährt
     if(g.modes.includes("tube") == true){
+      //die nötigen Infos über die Station in das Array schreiben (Name, Position, ID)
       ApiArray[ApiArray.length] = [g.commonName, coordinates1 = [g.lat,g.lon], g.id];
     }
   }
@@ -51,16 +57,27 @@ function showStops(response) {
   addMarkers(ApiArray);
 
 }
+/**
+ * @desc Funktion um die Ankünfte an der gewählten MetroStation abzufragen
+ *
+ * @param id - ID der gewählten MetroStation
+ */
 function getArrivals(id){
   var apikey2 = "https://api.tfl.gov.uk/StopPoint/"+id+"/arrivals"
   document.getElementById("tableBody").innerHTML = "";
   openRequest(apikey2, showArrivals);
 }
 
+/**
+ * @desc Funktion um die Ankünfte an der gewählten MetroStation anzuzeigen
+ *
+ * @param response
+ */
 function showArrivals(response){
   var ApiData2 = JSON.parse(response.responseText);
   var ApiArray2 = [];
   for (g of ApiData2) {
+    //Alle nötigen Informationen in Array abspeichern (nicht alle werden angezeigt)
       ApiArray2[ApiArray2.length] = [g.lineName, g.destinationName, g.expectedArrival, g.timeToStation, g.vehicleId, g.id];
     }
   var index=0;
@@ -68,6 +85,7 @@ function showArrivals(response){
   ApiArray2.sort(function(a, b) {
     return a[3] - b[3];
   })
+  //Erstellen der HTML-Tabellen-Elemente mit den Informationen und eines Buttons um eine Fahrt auszuwählen
   for (f of ApiArray2) {
     var row = document.createElement("tr");
     row.id ="abfahrt"+index;
@@ -85,6 +103,7 @@ function showArrivals(response){
     var tableChoose = document.createElement("td");
     var btnChoose = document.createElement("button");
     node = document.createTextNode("Diese Fahrt nehmen");
+    btnChoose.addEventListener("click", takeDrive);
     btnChoose.appendChild(node);
     tableChoose.appendChild(btnChoose);
     var currentRow = document.getElementById("abfahrt"+index);
@@ -101,10 +120,27 @@ function showArrivals(response){
   else
   document.getElementById("anzeigeAbfahrten").style.display = "block";
 }
+
 function errorcallback(e) {
 
     document.getElementById("anzeigeFahrten").innerHTML = "errorcallback: check web-console";
 }
 
 function loadcallback() {
+}
+
+/**
+ * @desc Funktion um die ausgewählte Fahrt in der Datenbank abzuspeichern
+ *
+ *
+ */
+function takeDrive(){
+  console.log(pointer);
+  console.log(ApiArray);
+  var xhttp = new XMLHttpRequest();
+  var data = pointer;
+
+
+  xhttp.open("POST", "NeueFahrt.html", true);
+  xhttp.send(data);
 }
