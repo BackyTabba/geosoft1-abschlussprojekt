@@ -261,3 +261,8 @@ tags
 src/tokens.js
 mongodb/data/*
 .env
+mongodb/data/WiredTiger.wt
+mongodb/data/WiredTiger.lock
+mongodb/data/sizeStorer.wt
+mongodb/data/mongod.lock
+mongodb/data/_mdb_catalog.wt
