@@ -27,12 +27,10 @@ function statechangecallback(func,x,z) { //mit parameter response
     function actualcallback(){
         if (x.status == "200" && x.readyState == 4) {
 
-            // console.log(JSON.parse(x.responseText));
             func(x,z);
 
         }
     }
-    //console.dir(x);
     return actualcallback;
 }
 /**
