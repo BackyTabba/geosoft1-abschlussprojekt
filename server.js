@@ -12,8 +12,11 @@ const session = require("express-session")
 const flash = require("express-flash")
 const methodOverride = require("method-override")
 const mongoose = require("mongoose");
+const cookie= require("cookie-parser")
+mongoose.set('useFindAndModify', false);
 const mail = require('sendmail')();
-
+var {ArztRouter,UserRouter,AdminRouter} = require("./db");
+var server = app.listen(3000, () => console.log("listening on port " + 3000 + "! :)"));
 //connect to mongodb
 mongoose
     .connect("mongodb://127.0.0.1:27017/corona-app", { useNewUrlParser: true , useUnifiedTopology: true })
@@ -21,7 +24,6 @@ mongoose
     .catch(err => console.error("Could not connect to MongoDB..."));
 
 //initialzie Passport
-//lalala
 const initializePassport = require("./passport-config");
 const { User } = require("./models/user.model");
 initializePassport(
@@ -34,9 +36,19 @@ app.use(express.urlencoded({extended:false}))
 //app.use("/", express.static(__dirname + "/src/html"));
 
 
+app.use('/jquery', (req,res)=> { res.sendFile(__dirname+"/node_modules/jquery/dist/jquery.min.js"); });
+app.use('/leaflet', express.static(__dirname+'/node_modules/leaflet/dist'));
+app.use('/bootstrap', express.static(__dirname+'/node_modules/bootstrap/dist'));
+
+
+//Pfade und Router
+app.use("/User", UserRouter,express.static(__dirname+"/src/html/user"));
+app.use("/Arzt", ArztRouter,express.static(__dirname+"/src/html/arzt"));
+app.use("/Admin", AdminRouter);
+
 app.use(flash())
 app.use(session({
-    secret: process.env.SEISSION_SECRET,
+    secret: process.env.SESSION_SECRET,
     resave:false,
     saveUninitialized: false
 }))
@@ -64,7 +76,7 @@ app.post("/register",checkNotAuthenticated,async (req,res)=>{
     try{
         const hashedPassword = await bcrypt.hash(req.body.password,12)
         users.push({
-            id: Date.now().toString(),
+            ID: Date.now().toString(),
             name: req.body.name,
             email: req.body.email,
             password: hashedPassword
@@ -80,6 +92,8 @@ app.delete("/logout",(req,res)=>{
     req.logOut()
     res.redirect("/login")
 })
+
+
 
 
 function risikoFahrt(req,res,next){
@@ -134,6 +148,8 @@ function checkAuthenticated(req, res, next) {
       req.session.save();
       next();
   }
+  //Bitte ignorieren, zukünftige Funktionen:
+  //https://stackoverflow.com/questions/28741062/how-can-you-define-multiple-isauthenticated-functions-in-passport-js
   /*  function allowAdmins(req, res, next) {
         if (req.user.role === 'Admin') return next();
         res.redirect('/user-login');
@@ -144,4 +160,18 @@ function checkAuthenticated(req, res, next) {
         res.redirect('/admin-login');
       }*/
 
-app.listen(3000)
+
+
+      process.on("SIGTERM", () => {
+        server.close();
+        app.locals.dbConnection.close();
+        console.log("SIGTERM");
+        process.exit(0);
+    });
+    
+    process.on("SIGINT", () => {
+        server.close();
+        app.locals.dbConnection.close();
+        console.log("SIGINT");
+        process.exit(0);
+    });

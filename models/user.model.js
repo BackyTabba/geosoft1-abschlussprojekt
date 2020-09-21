@@ -54,5 +54,5 @@ function validateUser(user) {
   return schema.validate(user);
 }
 
-exports.User = User; 
+exports.DbUser = User; 
 exports.validate = validateUser;

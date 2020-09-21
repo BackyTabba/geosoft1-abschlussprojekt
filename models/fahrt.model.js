@@ -10,7 +10,7 @@ const FahrtSchema = new mongoose.Schema({
     maxlength: 50
   },
   Risiko: {
-    type: boolean,
+    type: Boolean,
     required: true
   },
   endstation: String,

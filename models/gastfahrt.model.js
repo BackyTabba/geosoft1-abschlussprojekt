@@ -16,7 +16,7 @@ const GastFahrtSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  einstiegszeit: Boolean,
+  einstiegszeit: String,
   endstation: String,
   liniennamen: String,
   stationsname: String,
