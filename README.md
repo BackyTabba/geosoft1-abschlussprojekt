@@ -26,10 +26,18 @@ geosoft1-projekt
 ***
 https://github.com/BackyTabba/geosoft1-abschlussprojekt.git
 
+### Start von MongoDB
+***
+* mongod --dbpath=./mongodb/data/
+
+
 ### Start der APP
 ***
 * $ npm install
 * $ npm start
+* oder 
+* $ node . in dem Ordner zum Starten.
+* http://localhost:3000/ 
 
 ### Autorennamen
 ***
@@ -69,4 +77,4 @@ Die Autoren sind:
 ***
 ### Vorzunehmende Änderungen
 ***
-Datei hinzufügen mit SESSION_SECRET= ChangeMe
+.env Datei hinzufügen mit SESSION_SECRET= ChangeMe
