@@ -260,3 +260,4 @@ tags
 
 src/tokens.js
 mongodb/data/journal/
+.env
