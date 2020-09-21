@@ -2,9 +2,47 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width= device-width, initial-scale=1"
     <title>Benutzerfahrten</title>
+   <style> 
+       body{
+            margin: 30px;
+            background-color: lightgrey;
+        }
+        h1{
+            color: navy;
+            margin-left: 50px;
+            font-size: 40px;
+        }
+
+        h2{
+            margin-left: 50px;
+            font-size: 30px;
+        }
+        
+
+        .my-container {
+            border: 1px solid black;
+        }
+        
+        }
+        .my-col{
+            border: 3px solid black;
+        }
+
+        .table-image{
+            td, th{
+                vertical-align: middle;
+            }
+        }
+    </style>
 </head>
 <body>
+  <h1 style="font-size: 4vw; text-align: center;">Nutzerfahrten</h1> 
+   <div class="container my-container">
+     <div class="row">
+      <div class="col my-col col--md-12 col--sm-6">  
     <form>
         <label for="vonNutzerfahrten">von</label><br>
         <textarea id="vonNutzerfahrten"></textarea><br>
@@ -13,30 +51,38 @@
         <textarea id="bisNutzerfahrten"></textarea><br>
         <input type='button' id='submitBtn' value="Submit">
       </form>
-<div id="mapNutzerfahrten"></div>
+     </div>
+    </div>
+   </div>        
+
 <div id="Nutzerfahrtentabelle">
-<h2>Fahrten von Benutzer</h2>
-    <table id="tableNutzerfahrten" cellpadding="2" cellspacing="2" border="1">
+<h2 style="font-size: 2vw; padding: 15px; text-align: center;">Fahrten von Benutzer</h2>
+  <div class="container my-container">
+   <div class="table-responsive">
+    <div class="row">
+     <div class="col-12"> 
     
-    <tbody>
-    
-    <tr>
-            <th><input type="checkbox">Alle</th>
-            <th>Linie</th>
-            <th>Ab</th>
-            <th>Zeit</th>
+    <table class="table table-bordered" id="tableNutzerfahrten" cellpadding="2" cellspacing="2" border="1">
+     <thead>
+          <tr>
+            <th scope="col"><input type="checkbox">Alle</th>
+            <th scope="col">Linie</th>
+            <th scope="col">Ab</th>
+            <th scope="col">Zeit</th>
         </tr>
-        <tr>
-            <td><input type="checkbox"></td>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr> 
-    </tbody>
-    </table>
+       </thead>  
+      <tbody>
+    
+     
+      </tbody>
+     </table>
+    </div> 
+   </div>
+ </div>     
 </div>
+</div>    
 <br><br>
-<input type='button' id='markierBtn' value="Fahrten als Risiko markieren">
+<input type='button' class="btn btn-primary" id='markierBtn' value="Fahrten als Risiko markieren">
 
 </body>
 </html>
