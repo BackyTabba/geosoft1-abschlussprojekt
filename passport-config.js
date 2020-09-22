@@ -3,9 +3,9 @@ const bcrypt = require("bcrypt")
 
 const LocalStrategy=require("passport-local").Strategy
 
-function initialize(passport, getUserByName,getUserById){
+ async function initialize(passport, getUserByName,getUserByID){
     const authenticateUser = async (name,password,done) =>{
-        const user = getUserByName(name)
+        const user =  getUserByName(name)//await
         if(name== null){
             return done(null, false, {message: "No user with that name"})
         }
@@ -25,10 +25,28 @@ function initialize(passport, getUserByName,getUserById){
 
     }
     passport.use(new LocalStrategy({usernameField: "name"},authenticateUser))
-    passport.serializeUser((user, done)=>done(null,user.id))
-    passport.deserializeUser((id, done)=>{ 
-        return done(null,getUserById(id))
+    passport.serializeUser(( user, done)=>done(null,user.id))
+    passport.deserializeUser((ID, done)=>{ 
+        return done(null, getUserByID(ID))
     })
+    
+  /*  //ASYNC ALL THE THINGS!!
+passport.deserializeUser(async (ID, done) => {
+    try {
+      let user = await DbUser.findOne({ID:ID});
+      if (!user) {
+        return done(new Error('user not found'));
+      }
+      done(null, user);
+    } catch (e) {
+      done(e);
+    }
+  });*/
+    
+
+   /* passport.deserializeUser((ID, done)=>{ 
+        return done(null, async()=> {return getUserByID(ID)})
+    })*/
 }
 
 module.exports =initialize

@@ -16,26 +16,22 @@ const UserSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
-    minlength: 3,
-    maxlength: 50
   },
   email: {
     type: String,
     required: true,
-    minlength: 5,
-    maxlength: 255,
     unique: true
   },
   password: {
     type: String,
-    required: true,
-    minlength: 3,
-    maxlength: 255
+    required: true
   },
   //give different access rights if admin or not 
-  isAdmin: Boolean,
+  IsAdmin: Boolean,
   IsArzt: Boolean,
   IsInfiziert:Boolean
+},{
+  versionKey: false // You should be aware of the outcome after set to false
 });
 
 

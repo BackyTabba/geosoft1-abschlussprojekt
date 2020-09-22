@@ -7,17 +7,20 @@ const { DbUser, validate } = require("./models/user.model")
 const DbFahrt = require("./models/fahrt.model")
 const DbGastFahrt= require("./models/gastfahrt.model");
 const c = require('config');
+//II)
 ArztRouter.get("/FindUsers", function(req,res) {
     DbUser.find(function(err,DbUser) {
     res.send(DbUser);
     })
 })
-ArztRouter.post("/FindUser", function(req,res) {
+ArztRouter.post("/FindUserByID", function(req,res) {
     DbUser.findOne({ID:req.body.ID},function(err,DbUser) {
     res.send(DbUser);
     })
 })
 //https://github.com/Sudarshan101/curlapinode/blob/master/server.js
+
+
 
 //Create User
 AdminRouter.post("/CreateUser", function(req,res) {
@@ -29,16 +32,15 @@ AdminRouter.post("/CreateUser", function(req,res) {
            res.json(user);
         }})
 })
-//Update User
-ArztRouter.put("/SetRiskTrue", function(req, res) {
+ArztRouter.put("/SetUserRiskTrue", function(req, res) {
     DbUser.findOneAndUpdate({ID:req.body.ID}, { $set: { IsInfiziert: true }}, function(err, user) {
         if (err){
             res.send(err);
         }
-        res.json(user);
+         (user);
     });
 })
-ArztRouter.put("/SetRiskFalse", function(req, res) {
+ArztRouter.put("/SetUserRiskFalse", function(req, res) {
     DbUser.findOneAndUpdate({ID:req.body.ID}, { $set: { IsInfiziert: false }}, function(err, user) {
         if (err){
             res.send(err);
@@ -47,27 +49,45 @@ ArztRouter.put("/SetRiskFalse", function(req, res) {
     
     });
 })
-// Fahrt als Risiko markieren (Arzt)
-ArztRouter.put("/SetFahrtRiskTrue", function(req, res) {
-    DbFahrt.findOneAndUpdate({ID:req.body.ID}, { $set: { Risiko: true }}, function(err, user) {
+
+// I) Fahrt als Risiko markieren (Arzt)
+ArztRouter.put("/SetFahrtRiskTrue", function (req, res) {SetFahrtRiskTrue(req.body.FahrtID)
+})
+    //finde Fahrt nach ID
+    function SetFahrtRiskTrue(SentID){
+    DbFahrt.findOneAndUpdate({ID:SentID}, { $set: { Risiko: true }}, function(err, fahrt) {
         if (err){
             res.send(err);
         }
-        res.json(user);
+        //setze Risiko=true
+        
+        //finde alle Mitfahrer
+        DbGastFahrt.find({FahrtID:fahrt.FahrtID},function(err,DbGastFahrt) {
+            res.send(DbGastFahrt);
+            for(x in DbGastFahrt){
+                //setze bei jedem IsInfiziert=true
+                DbUser.findOneAndUpdate({ID:req.body.ID},{ $set: { IsInfiziert: true }},function(err,DbUser) {
+                    res.send(DbUser);
+                    })
+            }
+            })
     });
+}
+
+
     ArztRouter.get("/FindRisikoFahrten", function(req,res) {
     DbFahrt.find({Risiko:true},function(err,DbFahrt) {
     res.send(DbFahrt);
     })
 })
 
-ArztRouter.get("/FindInfizierte", function(req,res) {
+ArztRouter.get("/FindInfizierteUser", function(req,res) {
     DbUser.find({IsInfiziert:true},function(err,DbUser) {
     res.send(DbUser);
     })
 })
 
-})
+
 ArztRouter.post("/FindRisikoFahrtenTeilnehmer", function(req,res) {
     DbGastFahrt.find({FahrtID:req.body.ID},function(err,DbGastFahrt) {
     res.send(DbGastFahrt);
@@ -81,6 +101,24 @@ ArztRouter.post("/FindRisikoFahrtenTeilnehmer", function(req,res) {
     res.send(DbUser);
     })
 })*/
+//III)
+ArztRouter.post("/MarkAllFahrtenFromUserByName", function(req,res) {
+    //FindeUserByName
+    DbUser.findOne({name:req.body.name},function(err,DbUser) {
+    b=DbUser;
+    //Finde alle Fahren des Users
+
+    DbGastFahrt.find({GastID:b.ID},function(err,DbGastFahrt) {
+        a=DbGastFahrt;
+
+
+        //Setze bei allen Fahrten des Users Risiko=true
+        for(x in a){
+            SetFahrtRiskTrue(x);
+        }
+        })
+    })
+})
 
 ArztRouter.post("/FindUserByName", function(req,res) {
     DbUser.findOne({name:req.body.name},function(err,DbUser) {
@@ -88,13 +126,13 @@ ArztRouter.post("/FindUserByName", function(req,res) {
     })
 })
 
-ArztRouter.post("/FindUserFahrten", function(req,res) {
+ArztRouter.post("/FindFahrtenByUserID", function(req,res) {
     DbGastFahrt.find({GastID:req.body.ID},function(err,DbGastFahrt) {
     res.send(DbGastFahrt);
     })
 })
 
-ArztRouter.post("/SetManyFahrtRisikoTrue", function(req,res) {
+ArztRouter.post("/SetManyFahrtenRisikoTrue", function(req,res) {
     a=req.body.IDs
     for(x in a){
         DbFahrt.findOneAndUpdate({ID:x}, { $set: { Risiko: true }}, function(err, user) {
@@ -105,7 +143,7 @@ ArztRouter.post("/SetManyFahrtRisikoTrue", function(req,res) {
         });
     }
 })
-ArztRouter.post("/GetUsersFromManyFahrten", function(req,res) { //???????????????????????????????????????????????????????????????????
+ArztRouter.post("/GetUsersFromManyFahrten", function(req,res) { 
     a=req.body.IDs
     c={};
     for(x in a){
@@ -116,7 +154,7 @@ ArztRouter.post("/GetUsersFromManyFahrten", function(req,res) { //??????????????
     res.send(c);
 })
 
-ArztRouter.post("/SetManyUserRisikoTrue", function(req,res) {
+ArztRouter.post("/SetManyUserRisikoTrueByUserID", function(req,res) {
     a=req.body.IDs
     for(x in a){
         DbUser.findOneAndUpdate({ID:x}, { $set: { IsInfiziert: true }}, function(err, user) {
@@ -128,36 +166,40 @@ ArztRouter.post("/SetManyUserRisikoTrue", function(req,res) {
     }
 })
 
-//Eine Fahrt nehmen (User)
+//IV) Eine Fahrt nehmen (User)
 
 //{Username,IDderFahrt(Nummer),einstiegszeit(String),endstation(String),liniennamen(String),Lat(Nummer),Long(Nummer),StationID(Nummer)}
-UserRouter.post("/AddUserToFahrt", function(req,res) {
-    a={};
-    DbUser.findOne({name:req.body.name},function(err,DbUser) {
-    a=DbUser;
-    })
-    b=a.ID;
-    DbGastFahrt.create({
-        ID:Date.now,
-        GastID:b,
-        FahrtID:req.body.FahrtID,
-        einstiegszeit:req.body.einstiegszeit,
-        endstation: req.body.endstation,
-        liniennamen: req.body.liniennamen,
-        stationsname: req.body.stationsname,
-        Lat:req.body.Lat,
-        Long:req.body.Long,
-        StationID:req.body.StationID
 
-    }, function(err, user) {
-        if (err){
-           res.send(err);
-        }
-        if(user) {
-           res.json(user);
-        }
-});
-})
+UserRouter.post("/AddUserToFahrt", function(req,res) {AddUserToFahrt(req.body)})
+function AddUserToFahrt(b){
+    //ID,einstiegszeit,endstation,liniennamen,stationsname,Lat,Long,StationID
+a=sessionStorage.getItem("ID");
+    //User mit der ID hinzufügen
+    DbUser.findOne({ID:a},function(err,DbUser) {
+        //für den User a neue Fahrt anlegen, a wird aus dem SessionStorage geholt, die Informationen für b müssen übergeben werden.
+        DbGastFahrt.create({
+            ID:Date.now,
+            GastID:a,
+            FahrtID:b.FahrtID,
+            einstiegszeit:b.einstiegszeit,
+            endstation: b.endstation,
+            liniennamen: b.liniennamen,
+            stationsname: b.stationsname,
+            Lat:b.Lat,
+            Long:b.Long,
+            StationID:b.StationID
+
+        }, function(err, user) {
+            if (err){
+            res.send(err);
+            }
+            if(user) {
+            res.json(user);
+            }
+        });
+    })
+}
+
 
 //ID(Number,required,unique),Risiko(Boolean,required),endstation(String),liniennamen(String)
 
@@ -178,15 +220,15 @@ UserRouter.post("/AddFahrt", function(req,res) {
         }
     });
 })
-//Bisherige Fahrten anzeigen (User)
+//V) Bisherige Fahrten anzeigen (User)
 UserRouter.get("/FindAllFahrten", function(req,res) {
-    DbGastFahrt.find({GastID:req.body.ID},function(err,DbUser) {
+    a=sessionStorage.getItem("ID");
+    DbGastFahrt.find({GastID:a},function(err,DbUser) {
     res.send(DbUser);
     })
 })
 
-//Alle Fahrten einsehen (Arzt)
-
+//VI) Alle Fahrten einsehen (Arzt)
 ArztRouter.get("/FindAllFahrten", function(req,res) {
     DbFahrt.find(function(err,DbUser) {
     res.send(DbUser);

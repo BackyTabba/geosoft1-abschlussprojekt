@@ -29,14 +29,59 @@ mongoose
     .then(() => console.log("Connected to MongoDB..."))
     .catch(err => console.error("Could not connect to MongoDB..."));
 
+
 //initialzie Passport
 const initializePassport = require("./passport-config");
 const { User } = require("./models/user.model");
 initializePassport(
     passport,
-    name=> users.find(user => user.name === name),
-    id => users.find(user => user.id === id)
+    //name=> users.find(user => user.name === name),
+    async (name) => {return await FindUserByName(name)},
+    //id => users.find(user => user.id === id)
+    async (ID) => {return await FindUserByID(ID)}
     )
+
+
+//Irgendwie nach der Anmeldung:
+function postLogin(){
+a=FindUserByName(Username);
+    sessionStorage.setItem("ID", a.ID);
+    sessionStorage.setItem("name", a.name);
+    sessionStorage.setItem("email",a.email);
+    sessionStorage.setItem("password", a.password);
+    sessionStorage.setItem("IsInfiziert", a.IsInfiziert);
+    sessionStorage.setItem("IsArzt", a.IsArzt);
+    sessionStorage.setItem("IsAdmin",a.IsAdmin);
+}
+
+//--------------------------------------------------------------------
+const { DbUser, validate } = require("./models/user.model")
+const DbFahrt = require("./models/fahrt.model")
+const DbGastFahrt= require("./models/gastfahrt.model");
+
+async function FindUserByID(ID){
+    await DbUser.findOne({ID:ID},function(err,DbUser) {
+      console.log("User found by ID:"+DbUser)
+      return DbUser;  
+    })
+}
+
+//const doc = await Band.findOne({ name: "Guns N' Roses" }); // works
+
+
+
+async function FindUserByName(Name){
+    await DbUser.findOne({name:Name},function(err,DbUser) {
+        console.log("User found by Name:"+DbUser);
+    return DbUser;
+    })}
+
+function CreateUser (data){
+        DbUser.create(data);
+}
+//DbUser.create({ name: 'fluffy',password:"12345",email:"qaaaaaaaaa@q",ID:1234566 });
+
+//--------------------------------------------------------------------
 
 app.use(express.urlencoded({extended:false}))
 //app.use("/", express.static(__dirname + "/src/html"));
@@ -49,8 +94,8 @@ app.use('/bootstrap', express.static(__dirname+'/node_modules/bootstrap/dist'));
 
 //Pfade und Router
 app.use("/User", UserRouter,express.static(__dirname+"/src/html/user"));
-app.use("/Arzt", ArztRouter,express.static(__dirname+"/src/html/arzt"));
-app.use("/Admin", AdminRouter);
+app.use("/Arzt", ArztRouter,express.static(__dirname+"/src/html/arzt"));//CheckArzt ,
+app.use("/Admin", AdminRouter);//CheckAdmin ,
 
 app.use(flash())
 app.use(session({
@@ -62,7 +107,7 @@ app.use(passport.initialize())
 app.use(passport.session())
 app.use(methodOverride("_method"))
 
-app.get('/',checkAuthenticated,checkArzt,checkArzt,(req,res)=>{
+app.get('/',checkAuthenticated,checkArzt,(req,res)=>{
     res.sendFile(__dirname+"/src/html/index.html")
     })
 
@@ -78,14 +123,19 @@ app.post("/login",checkNotAuthenticated ,passport.authenticate("local",{
 app.get("/register",checkNotAuthenticated,  (req,res)=>{
     res.sendFile(__dirname+"/src/html/register.html");
 })
+app.get("/test",wrapper);
 app.post("/register",checkNotAuthenticated,async (req,res)=>{
     try{
         const hashedPassword = await bcrypt.hash(req.body.password,12)
-        users.push({
-            id: Date.now().toString(),
+        //users.push({
+            CreateUser({
+            ID: Date.now().toString(),
             name: req.body.name,
             email: req.body.email,
-            password: hashedPassword
+            password: hashedPassword,
+            IsInfiziert:false,
+            IsArzt:false,
+            IsAdmin:false
         })
         res.redirect("/login")
     } catch {
@@ -147,9 +197,65 @@ function checkAuthenticated(req, res, next) {
     }
     next()
   }
+  function wrapper(req,res,next){
+      var a,b;
+      testa(req,res,next);
 
-  function checkArzt(req,res,next) {
+    
+  console.log(a,b);
+
+
+   // user = await DbUser.findOneByName(name);
+    //console.log(DbUser);
+    //FindUserByID(1600789791848,(abc)=>{res.json(abc)});
+    /*{
+        ID: Date.now().toString(),
+        name: "qqqqqqqqqqq",
+        email: "q@qqqqqqqq",
+        password: 123456323778,
+        IsInfiziert:false,
+        IsArzt:false,
+        IsAdmin:false
+      }*/
+    //next();
+  }
+  async function testa(req,res,next){
+    DbUser.find({ name: {$regex:"^A"}} ).
+    then(DbUsers => {              
+      console.log(DbUsers[0].name); // 'A'
+      res.send(DbUsers);
+      return DbUser.find({ name:{$regex: "^B"} });
+    }).
+    then(DbUsers => {
+      console.log(DbUsers[1].name); // 'B'
+      res.send(DbUsers);
+    });
+  }
+  function checkArzt(req,res,next){
+    if(!(sessionStorage.getItem("IsArzt"))){
+        req.redirect("/")
+    }else{
+    next();
+    }
+  }
+  function checkAdmin(req,res,next){
+    if(!(sessionStorage.getItem("IsAdmin"))){
+        req.redirect("/")
+    }else{
+    next();
+    }
+  }
+  function checkArzti(req,res,next) {
       console.log(req.user.role)
+      CreateUser({
+        id: Date.now().toString(),
+        name: "q",
+        email: "q@q",
+        password: 123456778,
+        IsInfiziert:false,
+        IsArzt:false,
+        IsAdmin:false
+      })
       sessionStorage.setItem("key", "value");
       sessionStorage.setItem("lala", "value");
       sessionStorage.setItem("los", "santos");
