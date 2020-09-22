@@ -259,7 +259,7 @@ tags
 # End of https://www.gitignore.io/api/node,vim,git,macos,linux,sublimetext
 
 src/tokens.js
-mongodb/data/
+mongodb/
 .env
 
 *~
@@ -291,5 +291,9 @@ mongodb/data/
 *.*sdf
 *.psess
 *.tmp
+*.wt
+*.lock
+*.turtle
+
 *#
 .#*
