@@ -34,6 +34,7 @@
     "mongo": "^0.1.0",
     "mongodb": "^3.6.0",
     "mongoose": "^5.10.0",
+    "node-sessionstorage": "^1.0.0",
     "nodemon": "^2.0.4",
     "passport": "^0.4.1",
     "passport-local": "^1.0.0",

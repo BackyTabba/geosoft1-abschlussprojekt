@@ -6,13 +6,19 @@ if(process.env.NODE_ENV !== "production"){
 const express = require('express')
 const app= express()
 const bcrypt = require("bcrypt");
-const users=[]
+const users=[{
+    id: '1600781382780',
+    name: 'w',
+    email: 'w@w',
+    password: '$2b$12$q50ZOCs7fcDFLAXYUnAsz.aNT3OG3sp3amtcb.C/gOpCozubNGenK'
+  }]
 const passport = require("passport")
 const session = require("express-session")
 const flash = require("express-flash")
 const methodOverride = require("method-override")
+const sessionStorage = require("node-sessionstorage");
 const mongoose = require("mongoose");
-const cookie= require("cookie-parser")
+const cookie= require("cookie-parser");
 mongoose.set('useFindAndModify', false);
 const mail = require('sendmail')();
 var {ArztRouter,UserRouter,AdminRouter} = require("./db");
@@ -76,7 +82,7 @@ app.post("/register",checkNotAuthenticated,async (req,res)=>{
     try{
         const hashedPassword = await bcrypt.hash(req.body.password,12)
         users.push({
-            ID: Date.now().toString(),
+            id: Date.now().toString(),
             name: req.body.name,
             email: req.body.email,
             password: hashedPassword
@@ -144,6 +150,14 @@ function checkAuthenticated(req, res, next) {
 
   function checkArzt(req,res,next) {
       console.log(req.user.role)
+      sessionStorage.setItem("key", "value");
+      sessionStorage.setItem("lala", "value");
+      sessionStorage.setItem("los", "santos");
+      console.log(sessionStorage.getItem("los"));
+      //req.session.test={hallo:"welt"};
+     // req.sessionStorage.set(val1)={val2:"val3"}
+     // console.log(""+req.session.test);
+     // console.log(""+console.req.sessionStorage)
       if(req.user.role==undefined) req.user.role="User"
       req.session.save();
       next();
@@ -175,3 +189,4 @@ function checkAuthenticated(req, res, next) {
         console.log("SIGINT");
         process.exit(0);
     });
+
