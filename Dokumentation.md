@@ -15,6 +15,10 @@ HTML Seiten, JS-Dateien, API-Zugang und API Datenverarbeitung, Leaflet Karten un
 Backbone(node.js): Server.js,passport-config, db.js: mongodb(mongoose), Passport/Login, Routes
 
 
+Wir haben den Login zum laufen gebracht und die Datenbankfunktionalitäten überarbeitet. Außerdem Tests angelegt und HTML-Seiten überarbeitet und die Datenbankschnittstellen integriert.
+
+
+Leider hat der letzte Git-Merge das Projekt scheinbar komplett zerschossen, sodass nochnichtmal der Login Funktioniert. Git rocks.
 
 
 
