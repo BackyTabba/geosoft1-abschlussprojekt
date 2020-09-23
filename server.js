@@ -6,12 +6,6 @@ if (process.env.NODE_ENV !== "production") {
 const express = require('express')
 const app = express()
 const bcrypt = require("bcrypt");
-const users = [{
-  id: '1600781382780',
-  name: 'w',
-  email: 'w@w',
-  password: '$2b$12$q50ZOCs7fcDFLAXYUnAsz.aNT3OG3sp3amtcb.C/gOpCozubNGenK'
-}]
 const passport = require("passport")
 const session = require("express-session")
 const flash = require("express-flash")
@@ -20,6 +14,9 @@ const sessionStorage = require("node-sessionstorage");
 const mongoose = require("mongoose");
 const cookie = require("cookie-parser");
 mongoose.set('useFindAndModify', false);
+const { DbUser, validate } = require("./models/user.model")
+const {DbFahrt }= require("./models/fahrt.model")
+const {DbGastFahrt}= require("./models/gastfahrt.model");
 const mail = require('sendmail')();
 var { ArztRouter, UserRouter, AdminRouter } = require("./db");
 var server = app.listen(3000, () => console.log("listening on port " + 3000 + "! :)"));
@@ -29,7 +26,7 @@ mongoose //127.0.0.1
   .then(() => console.log("Connected to MongoDB via localhost..."))
   .catch(err => {
     console.error("Could not connect to MongoDB via localhost...")
-    mongoose //127.0.0.1
+    mongoose //Docker
       .connect("mongodb://mongodbservice:27017/corona-app", { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex:true })
       .then(() => console.log("Connected to MongoDB via Docker..."))
       .catch(err => {
@@ -70,10 +67,9 @@ async function postLogin(a) {
   }
 }
 
+
 //--------------------------------------------------------------------
-const { DbUser, validate } = require("./models/user.model")
-const DbFahrt = require("./models/fahrt.model")
-const DbGastFahrt = require("./models/gastfahrt.model");
+
 
 async function FindUserByID(ID) {
   return await DbUser.findOne({ ID: ID }).exec();
@@ -95,18 +91,20 @@ function CreateUser(data) {
 //--------------------------------------------------------------------
 
 app.use(express.urlencoded({ extended: false }))
-//app.use("/", express.static(__dirname + "/src/html"));
 
 
+app.use("/css", express.static(__dirname + "/src/css"));
+app.use("/javascripts", express.static(__dirname + "/src/javascripts"));
+app.use("/icons", express.static(__dirname + "/src/icons"));
 app.use('/jquery', (req, res) => { res.sendFile(__dirname + "/node_modules/jquery/dist/jquery.min.js"); });
 app.use('/leaflet', express.static(__dirname + '/node_modules/leaflet/dist'));
 app.use('/bootstrap', express.static(__dirname + '/node_modules/bootstrap/dist'));
 
 
 //Pfade und Router
-app.use("/User", checkAuthenticated, UserRouter, express.static(__dirname + "/src/html/user"));
-app.use("/Arzt", checkArzt, ArztRouter, express.static(__dirname + "/src/html/arzt"));//CheckArzt ,
-app.use("/Admin", checkAdmin, AdminRouter);//CheckAdmin ,
+app.use("/User",checkAuthenticated , UserRouter, express.static(__dirname + "/src/html/user"));
+app.use("/Arzt",checkArzt,  ArztRouter, express.static(__dirname + "/src/html/arzt"));
+app.use("/Admin",checkAdmin,  AdminRouter);
 
 app.use(flash())
 app.use(session({
@@ -123,7 +121,7 @@ app.get("/", checkAuthenticated, (req, res) => {
   res.sendFile(__dirname + "/src/html/index.html")
 })
 
-app.post("/arzt/risikofahrt", risikoFahrt);
+app.post("/arzt/risikofahrt", MeldeRisikoFahrt);
 app.get("/login", checkNotAuthenticated, (req, res) => {
   res.sendFile(__dirname + "/src/html/login.html");
 })
@@ -145,7 +143,8 @@ app.post('/login', checkNotAuthenticated, function (req, res, next) {
       console.log("success")
       console.log(user)
       postLogin(user);
-      return res.redirect("/");
+      console.log(sessionStorage.getItem("Role"))
+      return res.redirect("/"+sessionStorage.getItem("Role"));
     });
   })(req, res, next);
 });
@@ -177,6 +176,7 @@ app.post("/register", checkNotAuthenticated, async (req, res) => {
 })
 
 app.delete("/logout", (req, res) => {
+  sessionStorage.removeItem("Role");
   req.logOut()
   res.redirect("/login")
 })
@@ -184,18 +184,18 @@ app.delete("/logout", (req, res) => {
 
 
 
-function risikoFahrt(req, res, next) {
+async function MeldeRisikoFahrt(req, res, next) {
   //1)
-  ID = req.ID;
-    /*[Datenbankschnittstelle Fahrt]*/ a = Fahrt.find(Fahrt.ID == ID)
-  a.update(Risiko) = true
+  a = await DbFahrt.find({FahrtID:req.ID},{new:true}).exec();
+  for(x of a){await DbFahrt.findOneAndUpdate({ID:a}, { $set: { Risiko: true }},{new:true}).exec();}
     //2)
-    /*[Datenbankschnittstelle für GastFahrten]*/ b = GastFahrten.find(FahrtID = a.ID)
+    b = await DbGastFahrt.find({FahrtID: a.ID,},{new:true}).exec();
   for (x in b) {
-        /*[Datenbankschnittstelle für User]*/ User.find(x.GastID).IsInfiziert = true;
+       await DbUser.findOneAndUpdate({ID:x.GastID}, { $set: { Risiko: true }},{new:true}).exec();
+
     mail({
-      from: 'noreply@meinedomain.com',
-      to: User.Email,
+      from: 'service@corona.de',
+      to: x.Email,
       subject: 'Teilnahme an eine Risikofahrt',
       content: 'Sie sind möglicherweise Infiziert! Bitte machen Sie einen Test!'
     },
@@ -212,14 +212,17 @@ function risikoFahrt(req, res, next) {
 
 
 function checkAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) {
+  if (!(sessionStorage.getItem("Role")==undefined)) {
+    console.log("User Authenticated")
+    console.log(sessionStorage.getItem("Role"))
     return next()
-  }
+  }else{
   try {
     req.session.save(() => { res.redirect("/login") })
   } catch (e) {
     res.redirect("/login")
   }
+}
 }
 
 
@@ -315,6 +318,11 @@ function checkArzti(req, res, next) {
       res.redirect('/admin-login');
     }*/
 
+    //db functions
+
+
+
+
 
 
 process.on("SIGTERM", () => {
@@ -330,4 +338,5 @@ process.on("SIGINT", () => {
   console.log("SIGINT");
   process.exit(0);
 });
+
 

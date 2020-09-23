@@ -41,4 +41,4 @@ const GastFahrt = mongoose.model('GastFahrt', GastFahrtSchema);
   return schema.validate(user);
 }*/
 
-exports.GastFahrt = GastFahrt;
+exports.DbGastFahrt = GastFahrt;

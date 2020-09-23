@@ -33,4 +33,4 @@ const Fahrt = mongoose.model('Fahrt', FahrtSchema);
   return schema.validate(user);
 }*/
 
-exports.Fahrt = Fahrt; 
+exports.DbFahrt = Fahrt; 

@@ -20,6 +20,7 @@
   "homepage": "https://github.com/BackyTabba/geosoft1-abschlussprojekt#readme",
   "dependencies": {
     "bcrypt": "^5.0.0",
+    "bootstrap": "^4.5.2",
     "config": "^3.3.1",
     "cookie-parser": "^1.4.5",
     "dotenv": "^8.2.0",

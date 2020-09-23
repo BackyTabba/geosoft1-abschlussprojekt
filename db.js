@@ -1,29 +1,40 @@
 var express = require('express');
 const mongoose = require('mongoose');
+const { DbUser, validate } = require("./models/user.model")
+const {DbFahrt }= require("./models/fahrt.model")
+const {DbGastFahrt}= require("./models/gastfahrt.model");
 var ArztRouter=express.Router(),UserRouter=express.Router() ,AdminRouter = express.Router();
 const Fahrt = require("./models/fahrt.model")
 const app=express();
-const { DbUser, validate } = require("./models/user.model")
-const DbFahrt = require("./models/fahrt.model")
-const DbGastFahrt= require("./models/gastfahrt.model");
+const sessionStorage= require("node-sessionstorage");
+
 const c = require('config');
+ArztRouter.use(express.json());
+ArztRouter.use(express.urlencoded({ extended: false }))
+UserRouter.use(express.json());
+UserRouter.use(express.urlencoded({ extended: false }))
+AdminRouter.use(express.json());
+AdminRouter.use(express.urlencoded({ extended: false }))
 //II)
-ArztRouter.get("/FindUsers", function(req,res) {
-    DbUser.find(function(err,DbUser) {
+ArztRouter.get("/FindUsers", async function(req,res,next) {
+    await DbUser.find(function(err,DbUser) {
     res.send(DbUser);
     })
 })
-ArztRouter.post("/FindUserByID", function(req,res) {
-    DbUser.findOne({ID:req.body.ID},function(err,DbUser) {
-    res.send(DbUser);
-    })
+ArztRouter.post("/FindUserByID", async function(req,res,next) { //http post http://localhost:3000/arzt/FindUserByID ID=1600866993418
+    //await DbUser.findOne({ID:req.body.ID},function(err,DbUser) {
+  //  res.send(DbUser);
+   // }) async (ID) => { return await FindUserByID(ID) }        return await DbUser.findOne({ ID: ID }).exec();
+    const a = await DbUser.findOne({ID:req.body.ID}).exec();
+    res.send(a);
+   next()
 })
 //https://github.com/Sudarshan101/curlapinode/blob/master/server.js
 
 
 
-//Create User
-AdminRouter.post("/CreateUser", function(req,res) {
+//Create   http post http://localhost:3000/Admin/CreateUser name="Bron Cena" ID=244423 email=asd@asd password=12313 IsAdmin=false IsArzt=false IsInfiziert=false
+AdminRouter.post("/CreateUser", function(req,res,next) {
     DbUser.create(req.body,function(err,user){
         if (err){
            res.send(err);
@@ -31,67 +42,85 @@ AdminRouter.post("/CreateUser", function(req,res) {
         if(user) {
            res.json(user);
         }})
+        next();
 })
-ArztRouter.put("/SetUserRiskTrue", function(req, res) {
-    DbUser.findOneAndUpdate({ID:req.body.ID}, { $set: { IsInfiziert: true }}, function(err, user) {
+ArztRouter.put("/SetUserRiskTrue", async function(req, res,next) { //http put http://localhost:3000/Arzt/SetUserRiskTrue ID=244423
+    a= await DbUser.findOneAndUpdate({ID:req.body.ID}, { $set: { IsInfiziert: true }}, function(err, user) {
         if (err){
             res.send(err);
         }
-         (user);
+        
     });
+    res.json(a);
+    next();
 })
-ArztRouter.put("/SetUserRiskFalse", function(req, res) {
-    DbUser.findOneAndUpdate({ID:req.body.ID}, { $set: { IsInfiziert: false }}, function(err, user) {
+ArztRouter.put("/SetUserRiskFalse", async function(req, res,next) { //http put http://localhost:3000/Arzt/SetUserRiskFalse ID=244423
+    a = await DbUser.findOneAndUpdate({ID:req.body.ID}, { $set: { IsInfiziert: false }}, function(err, user) {
         if (err){
             res.send(err);
         }
-        res.json(user);
+        //res.json(user);
     
     });
+    res.json(a);
+    next();
+})
+
+
+//Fahrt hinzufügen
+//ID(Number,required,unique),Risiko(Boolean,required),endstation(String),liniennamen(String)
+//http post localhost:3000/user/AddFahrt ID=123341 FahrtID=123456 Risiko=false endstation="Hüttenberg", liniennamen="TolleLinie"
+UserRouter.post("/AddFahrt", async function(req,res,next) {
+    a= sessionStorage.getItem("ID");
+    req.body={GastID:a,...req.body};
+    await DbGastFahrt.create(req.body,function(err,user){
+        if (err){
+           res.send(err);
+        }
+        if(user) {
+           res.json(user);
+        }})
+        next();
 })
 
 //I) Fahrt als Risiko markieren (Arzt)
-ArztRouter.put("/SetFahrtRiskTrue", function (req, res) {SetFahrtRiskTrue(req.body.FahrtID)
+ArztRouter.put("/SetFahrtRiskTrue",async function (req, res,next) {SetFahrtRiskTrue(req.body.FahrtID); next();
 })
     //finde Fahrt nach ID
-    function SetFahrtRiskTrue(SentID){
-    DbFahrt.findOneAndUpdate({ID:SentID}, { $set: { Risiko: true }}, function(err, fahrt) {
-        if (err){
-            res.send(err);
-        }
-        //setze Risiko=true
+    //setze Risiko=true
+    async function SetFahrtRiskTrue(SentID){
+   a= await DbFahrt.findOneAndUpdate({FahrtID:SentID}, { $set: { Risiko: true }},{new:true});
+
         
         //finde alle Mitfahrer
-        DbGastFahrt.find({FahrtID:fahrt.FahrtID},function(err,DbGastFahrt) {
-            res.send(DbGastFahrt);
-            for(x in DbGastFahrt){
+       b= await DbGastFahrt.find({FahrtID:fahrt.FahrtID}).exec()
+            
+            for(x in b){
                 //setze bei jedem IsInfiziert=true
-                DbUser.findOneAndUpdate({ID:req.body.ID},{ $set: { IsInfiziert: true }},function(err,DbUser) {
-                    res.send(DbUser);
-                    })
+                await DbUser.findOneAndUpdate({ID:req.body.ID},{ $set: { IsInfiziert: true }}).exec()
             }
-            })
-    });
+            
+    
 }
 
 
-    ArztRouter.get("/FindRisikoFahrten", function(req,res) {
-    DbFahrt.find({Risiko:true},function(err,DbFahrt) {
-    res.send(DbFahrt);
-    })
+    ArztRouter.get("/FindRisikoFahrten", async function(req,res,next) {
+    a=await DbFahrt.find({Risiko:true},{new:true}).exec();
+    res.send(a);
+    next();
 })
 
-ArztRouter.get("/FindInfizierteUser", function(req,res) {
-    DbUser.find({IsInfiziert:true},function(err,DbUser) {
-    res.send(DbUser);
-    })
+ArztRouter.get("/FindInfizierteUser", async function(req,res,next){
+    a= await DbUser.find({IsInfiziert:true},{new:true}).exec();
+    res.send(a);
+    next();
 })
 
 
-ArztRouter.post("/FindRisikoFahrtenTeilnehmer", function(req,res) {
-    DbGastFahrt.find({FahrtID:req.body.ID},function(err,DbGastFahrt) {
-    res.send(DbGastFahrt);
-    })
+ArztRouter.post("/FindRisikoFahrtenTeilnehmer",async function(req,res,next) {
+    a=await DbGastFahrt.find({FahrtID:req.body.ID},{new:true});
+    res.send(a);
+    next();
 })
 
 //Alle Fahrten eines Nutzers als Risiko markieren (in bestimmter Zeit) (Arzt)
@@ -102,138 +131,94 @@ ArztRouter.post("/FindRisikoFahrtenTeilnehmer", function(req,res) {
     })
 })*/
 //III)
-ArztRouter.post("/MarkAllFahrtenFromUserByName", function(req,res) {
+ArztRouter.post("/MarkAllFahrtenFromUserByName",async function(req,res,next) {
     //FindeUserByName
-    DbUser.findOne({name:req.body.name},function(err,DbUser) {
-    b=DbUser;
+    b= await DbUser.findOne({name:req.body.name},{new:true}).exec();
     //Finde alle Fahren des Users
 
-    DbGastFahrt.find({GastID:b.ID},function(err,DbGastFahrt) {
-        a=DbGastFahrt;
+    a= awaitDbGastFahrt.find({GastID:b.ID},{new:true}).exec();
 
 
         //Setze bei allen Fahrten des Users Risiko=true
         for(x in a){
-            SetFahrtRiskTrue(x);
+            await SetFahrtRiskTrue(x);
         }
-        })
-    })
+        next();
 })
 
-ArztRouter.post("/FindUserByName", function(req,res) {
-    DbUser.findOne({name:req.body.name},function(err,DbUser) {
-    res.send(DbUser);
-    })
+ArztRouter.post("/FindUserByName", async function(req,res,next) {
+    a= await DbUser.findOne({name:req.body.name},{new:true}).exec();
+    res.send(a);
+    next();
+
 })
 
-ArztRouter.post("/FindFahrtenByUserID", function(req,res) {
-    DbGastFahrt.find({GastID:req.body.ID},function(err,DbGastFahrt) {
-    res.send(DbGastFahrt);
-    })
+ArztRouter.post("/FindFahrtenByUserID",async function(req,res,next) {
+   a= await DbGastFahrt.find({GastID:req.body.ID},{new:true}).exec();
+   res.send(a);
+   next();
 })
 
-ArztRouter.post("/SetManyFahrtenRisikoTrue", function(req,res) {
+ArztRouter.post("/SetManyFahrtenRisikoTrue",async function(req,res,next) {
     a=req.body.IDs
     for(x in a){
-        DbFahrt.findOneAndUpdate({ID:x}, { $set: { Risiko: true }}, function(err, user) {
-            if (err){
-                res.send(err);
-            }
-            res.json(user);
-        });
+        await DbFahrt.findOneAndUpdate({ID:x}, { $set: { Risiko: true }},{new:true}).exec();
     }
+    next();
 })
-ArztRouter.post("/GetUsersFromManyFahrten", function(req,res) { 
+ArztRouter.post("/GetUsersFromManyFahrten", async function(req,res,next) { 
     a=req.body.IDs
     c={};
     for(x in a){
-        DbGastFahrt.find({GastID:req.body.ID},function(err,DbGastFahrt) {
-            c={...c,DbGastFahrt};
-            })
+        d= await DbGastFahrt.find({GastID:req.body.ID},{new:true}).exec();
+            c={...c,d};
     }
     res.send(c);
+    next();
 })
 
-ArztRouter.post("/SetManyUserRisikoTrueByUserID", function(req,res) {
+ArztRouter.post("/SetManyUserRisikoTrueByUserID", async function(req,res,next) {
     a=req.body.IDs
     for(x in a){
-        DbUser.findOneAndUpdate({ID:x}, { $set: { IsInfiziert: true }}, function(err, user) {
-            if (err){
-                res.send(err);
-            }
-            res.json(user);
-        });
-    }
+        await DbUser.findOneAndUpdate({ID:x}, { $set: { IsInfiziert: true }},{new:true}).exec();
+        }
+    next();
 })
 
 //IV) Eine Fahrt nehmen (User)
 
 //{Username,IDderFahrt(Nummer),einstiegszeit(String),endstation(String),liniennamen(String),Lat(Nummer),Long(Nummer),StationID(Nummer)}
 
-UserRouter.post("/AddUserToFahrt", function(req,res) {AddUserToFahrt(req.body)})
-function AddUserToFahrt(b){
+UserRouter.post("/AddUserToFahrt", async function(req,res) { await AddUserToFahrt(req.body)})
+async function AddUserToFahrt(b){
     //ID,einstiegszeit,endstation,liniennamen,stationsname,Lat,Long,StationID
-a=sessionStorage.getItem("ID");
+    a=sessionStorage.getItem("ID");
     //User mit der ID hinzufügen
-    DbUser.findOne({ID:a},function(err,DbUser) {
         //für den User a neue Fahrt anlegen, a wird aus dem SessionStorage geholt, die Informationen für b müssen übergeben werden.
-        DbGastFahrt.create({
-            ID:Date.now,
-            GastID:a,
-            FahrtID:b.FahrtID,
-            einstiegszeit:b.einstiegszeit,
-            endstation: b.endstation,
-            liniennamen: b.liniennamen,
-            stationsname: b.stationsname,
-            Lat:b.Lat,
-            Long:b.Long,
-            StationID:b.StationID
+        c={GastID:a,...b}
+            d=await DbGastFahrt.create(c,{new:true}).exec();
 
-        }, function(err, user) {
-            if (err){
-            res.send(err);
-            }
-            if(user) {
-            res.json(user);
-            }
-        });
-    })
+            res.send(d);
+                next();
+    
 }
 
 
-//ID(Number,required,unique),Risiko(Boolean,required),endstation(String),liniennamen(String)
 
-UserRouter.post("/AddFahrt", function(req,res) {
-    DbGastFahrt.create({
-        ID:req.body.ID,
-        Risiko:req.body.Risiko,
-        endstation:req.body.endstation,
-        einstiegszeit:req.body.einstiegszeit,
-        liniennamen: req.body.liniennamen,
-
-    }, function(err, user) {
-        if (err){
-        res.send(err);
-        }
-        if(user) {
-        res.json(user);
-        }
-    });
-})
 //V) Bisherige Fahrten anzeigen (User)
-UserRouter.get("/FindAllFahrten", function(req,res) {
+UserRouter.get("/FindAllFahrten", async function(req,res) {
     a=sessionStorage.getItem("ID");
-    DbGastFahrt.find({GastID:a},function(err,DbUser) {
-    res.send(DbUser);
-    })
+    b=await DbGastFahrt.find({GastID:a},{new:true}).exec();
+    res.send(b);
 })
 
 //VI) Alle Fahrten einsehen (Arzt)
-ArztRouter.get("/FindAllFahrten", function(req,res) {
-    DbFahrt.find(function(err,DbUser) {
-    res.send(DbUser);
-    })
+ArztRouter.get("/FindAllFahrten", async function(req,res) {
+    a= await DbFahrt.find().exec();
+    res.send(a);
 })
+
+
 module.exports.ArztRouter=ArztRouter;
 module.exports.UserRouter=UserRouter;
 module.exports.AdminRouter=AdminRouter;

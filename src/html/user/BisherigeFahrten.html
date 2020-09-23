@@ -3,7 +3,7 @@
 <head>
     <link rel="shortcut icon" href="">
     <meta charset="UTF-8">
-    <title>Übersicht</title>
+    <title>Bisherige Fahrten</title>
     <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="/leaflet/leaflet.css"/>
     <link rel="stylesheet" href="/css/style.css">
@@ -21,8 +21,8 @@
         <li class="nav-item">
           <a class="nav-link" href="NeueFahrt.html">Neue Fahrt</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="BisherigeFahrten.html">Bisherige Fahrten</a>
+        <li class="nav-item active">
+          <a class="nav-link" href="BisherigeFahrten.html">Bisherige Fahrten<span class="sr-only">(current)</span></a>
         </li>
       </ul>
       <ul class="navbar-nav ml-auto">
@@ -35,14 +35,27 @@
     </div>
   </nav>
 
-<div id="alertDiv">
+<div id="mapBisherigeFahrten"></div>
+<div id="anzeigeFahrten">
+<h2> Ihre bisherigen Fahrten von dieser Station</h2>
+<table id="tableFahrten">
+<thead>
+  <th>Linie</th>
+  <th>Richtung/Endstation</th>
+  <th>Einstieg</th>
+  <th>Einstiegszeit</th>
+</thead>
+<tbody id="tableBody">
+</tbody>
+</table>
 </div>
-<div id="uebersichtNeueFahrt"></div>
-
-<div id="uebersichtBisherigeFahrten"></div>
 
 <script src="/jquery"></script>
 <script src="/bootstrap/js/bootstrap.min.js"></script>
+<script src="/leaflet/leaflet.js"></script>
+<script src="/javascripts/leaflet.js"></script>
+<script src="/javascripts/benutzerbisherigefahrten.js"></script>
+<script src="/javascripts/api.js"></script>
 
 </body>
 </html>
