@@ -175,3 +175,5 @@ function checkAuthenticated(req, res, next) {
         console.log("SIGINT");
         process.exit(0);
     });
+
+    module.exports = server;
