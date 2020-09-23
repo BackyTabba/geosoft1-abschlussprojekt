@@ -50,7 +50,15 @@ async function postLogin(a){
     sessionStorage.setItem("password", a.password);
     sessionStorage.setItem("IsInfiziert", a.IsInfiziert);
     sessionStorage.setItem("IsArzt", a.IsArzt);
-    sessionStorage.setItem("IsAdmin",a.IsAdmin)    
+    sessionStorage.setItem("IsAdmin",a.IsAdmin);
+    if(a.IsArzt){
+    sessionStorage.setItem("Role","Arzt")
+    }else{
+      sessionStorage.setItem("Role","User")
+    }
+    if(a.IsAdmin){
+    sessionStorage.setItem("Role","Admin")
+    }
   }
 
 //--------------------------------------------------------------------
@@ -86,9 +94,9 @@ app.use('/bootstrap', express.static(__dirname+'/node_modules/bootstrap/dist'));
 
 
 //Pfade und Router
-app.use("/User", UserRouter,express.static(__dirname+"/src/html/user"));
-app.use("/Arzt", ArztRouter,express.static(__dirname+"/src/html/arzt"));//CheckArzt ,
-app.use("/Admin", AdminRouter);//CheckAdmin ,
+app.use("/User",checkAuthenticated, UserRouter,express.static(__dirname+"/src/html/user"));
+app.use("/Arzt",checkArzt, ArztRouter,express.static(__dirname+"/src/html/arzt"));//CheckArzt ,
+app.use("/Admin",checkAdmin, AdminRouter);//CheckAdmin ,
 
 app.use(flash())
 app.use(session({
@@ -100,7 +108,8 @@ app.use(passport.initialize())
 app.use(passport.session())
 app.use(methodOverride("_method"))
 
-app.get('/',checkAuthenticated ,(req,res)=>{
+app.get("/",checkAuthenticated ,(req,res)=>{
+    res.redirect("/"+sessionStorage.getItem("Role"));
     res.sendFile(__dirname+"/src/html/index.html")
     })
 
@@ -117,7 +126,7 @@ app.post("/login",checkNotAuthenticated ,passport.authenticate("local",
 }))
 */
 
-app.post('/login', function(req, res, next) {
+app.post('/login',checkNotAuthenticated, function(req, res, next) {
   passport.authenticate("local", function(err, user, info) {
     if (err) { return next(err); }
     if (!user) { return res.redirect("/login"); }
@@ -196,8 +205,11 @@ function checkAuthenticated(req, res, next) {
     if (req.isAuthenticated()) {
       return next()
     }
-
+    try{
     req.session.save(() => {res.redirect("/login")})
+  }catch(e){
+    res.redirect("/login")
+  }
   }
 
 
@@ -245,7 +257,7 @@ function checkAuthenticated(req, res, next) {
     });
   }
   function checkArzt(req,res,next){
-    if(!(sessionStorage.getItem("IsArzt"))){
+    if(!(sessionStorage.getItem("IsArzt")||sessionStorage.getItem("IsAdmin"))){
         res.redirect("/")
     }else{
     next();
