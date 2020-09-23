@@ -5,7 +5,7 @@ const LocalStrategy=require("passport-local").Strategy
 
  async function initialize(passport, getUserByName,getUserByID){
     const authenticateUser = async (name,password,done) =>{
-        const user =  getUserByName(name)//await
+        const user = await getUserByName(name)
         if(name== null){
             return done(null, false, {message: "No user with that name"})
         }
@@ -27,7 +27,7 @@ const LocalStrategy=require("passport-local").Strategy
     passport.use(new LocalStrategy({usernameField: "name"},authenticateUser))
     passport.serializeUser(( user, done)=>done(null,user.id))
     passport.deserializeUser((ID, done)=>{ 
-        return done(null, getUserByID(ID))
+        return done(null,async()=>{await getUserByID(ID)})
     })
     
   /*  //ASYNC ALL THE THINGS!!

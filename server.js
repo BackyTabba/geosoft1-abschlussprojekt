@@ -43,16 +43,15 @@ initializePassport(
 
 
 //Irgendwie nach der Anmeldung:
-function postLogin(){
-a=FindUserByName(Username);
+async function postLogin(a){
     sessionStorage.setItem("ID", a.ID);
     sessionStorage.setItem("name", a.name);
     sessionStorage.setItem("email",a.email);
     sessionStorage.setItem("password", a.password);
     sessionStorage.setItem("IsInfiziert", a.IsInfiziert);
     sessionStorage.setItem("IsArzt", a.IsArzt);
-    sessionStorage.setItem("IsAdmin",a.IsAdmin);
-}
+    sessionStorage.setItem("IsAdmin",a.IsAdmin)    
+  }
 
 //--------------------------------------------------------------------
 const { DbUser, validate } = require("./models/user.model")
@@ -60,10 +59,7 @@ const DbFahrt = require("./models/fahrt.model")
 const DbGastFahrt= require("./models/gastfahrt.model");
 
 async function FindUserByID(ID){
-    await DbUser.findOne({ID:ID},function(err,DbUser) {
-      console.log("User found by ID:"+DbUser)
-      return DbUser;  
-    })
+    return await DbUser.findOne({ID:ID}).exec();
 }
 
 //const doc = await Band.findOne({ name: "Guns N' Roses" }); // works
@@ -71,10 +67,7 @@ async function FindUserByID(ID){
 
 
 async function FindUserByName(Name){
-    await DbUser.findOne({name:Name},function(err,DbUser) {
-        console.log("User found by Name:"+DbUser);
-    return DbUser;
-    })}
+    return await (await DbUser.findOne({name:Name}))}
 
 function CreateUser (data){
         DbUser.create(data);
@@ -107,7 +100,7 @@ app.use(passport.initialize())
 app.use(passport.session())
 app.use(methodOverride("_method"))
 
-app.get('/',checkAuthenticated,checkArzt,(req,res)=>{
+app.get('/',checkAuthenticated ,(req,res)=>{
     res.sendFile(__dirname+"/src/html/index.html")
     })
 
@@ -115,11 +108,31 @@ app.post("/arzt/risikofahrt",risikoFahrt);
 app.get("/login",checkNotAuthenticated,(req,res)=>{
     res.sendFile(__dirname+"/src/html/login.html");
 })
-app.post("/login",checkNotAuthenticated ,passport.authenticate("local",{
+/*
+app.post("/login",checkNotAuthenticated ,passport.authenticate("local",
+{
     successRedirect: "/",
     failureRedirect: "/login",
     failureFlash: true
 }))
+*/
+
+app.post('/login', function(req, res, next) {
+  passport.authenticate("local", function(err, user, info) {
+    if (err) { return next(err); }
+    if (!user) { return res.redirect("/login"); }
+    req.logIn(user, function(err) {
+      if (err) { return next(err); }
+      console.log("success")
+      console.log(user)
+      postLogin(user);
+      return res.redirect("/");
+    });
+  })(req, res, next);
+});
+
+
+
 app.get("/register",checkNotAuthenticated,  (req,res)=>{
     res.sendFile(__dirname+"/src/html/register.html");
 })
@@ -233,14 +246,14 @@ function checkAuthenticated(req, res, next) {
   }
   function checkArzt(req,res,next){
     if(!(sessionStorage.getItem("IsArzt"))){
-        req.redirect("/")
+        res.redirect("/")
     }else{
     next();
     }
   }
   function checkAdmin(req,res,next){
     if(!(sessionStorage.getItem("IsAdmin"))){
-        req.redirect("/")
+        res.redirect("/")
     }else{
     next();
     }

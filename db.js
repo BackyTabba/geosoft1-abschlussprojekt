@@ -50,7 +50,7 @@ ArztRouter.put("/SetUserRiskFalse", function(req, res) {
     });
 })
 
-// I) Fahrt als Risiko markieren (Arzt)
+//I) Fahrt als Risiko markieren (Arzt)
 ArztRouter.put("/SetFahrtRiskTrue", function (req, res) {SetFahrtRiskTrue(req.body.FahrtID)
 })
     //finde Fahrt nach ID
