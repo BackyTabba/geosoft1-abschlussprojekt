@@ -1,47 +1,38 @@
 const chai = require('chai')
 global.expect = chai.expect;
 var supertest = require('supertest');
+let should = chai.should();
 
 
 
 
-const express = require('express')
+const api= require('../src/javascripts/api.js')
 const app= require('../server.js') 
 
 
-global.request = supertest(app);
+global.request = supertest(server);
 
 
-describe('API Test GET /login', function() {
+describe('API Test saveFahrt', function() {
     
-    it('OK /login', function(done) {
+    it('should not save a Fahrt without all properties necessary', function(done) {
+       
+       let fahrt = {
+       	Lat: 51.5,
+       	Long: -0.5,
+
+       }
+
        request
-        .get('/login')
-        .expect(200)
+        .post('localhost:3000/user/AddUserToFahrt')
+        .send(fahrt)
+        .end((err, res) =>{
+        	
+        	res.body.should.be.a('Object');
+        	
+        	res.body.should.have.property('stationsname');
+        	res.body.stationsname.should.have.property('kind').eql('required');
        done();
         });
     });
-
-// describe('API Test POST /register', function(){
-
-// 	it('should register a user with ID, name, email and password', function(done){
-//         let user = {
-//         	ID: 12345
-//         	name : 'JohnDoe'
-//         	email: 'john@doe.com'
-//         	password: '123455663045'
-//         }
-
-// 		request.post('/register')
-// 		    .send(user)
-// 		    .end((err, res) => {
-// 		    	res.should.have.status(200);
-// 		    	res.should.have.property('ID');
-// 		    	res.should.have.property('name');
-// 		    	res.should.have.property('email');
-// 		    	res.should.have.property('password');
-// 		    done();
-// 		    });
-// 	});
-// })
- 
+});
