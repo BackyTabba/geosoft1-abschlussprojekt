@@ -1,3 +1,4 @@
+//Passport Konfiguration, siehe Youtubevideo. (server.js Zeile 1)
 const { authenticate } = require("passport")
 const bcrypt = require("bcrypt")
 
@@ -22,31 +23,13 @@ const LocalStrategy=require("passport-local").Strategy
             return done(e)
             }
         }
-
     }
     passport.use(new LocalStrategy({usernameField: "name"},authenticateUser))
     passport.serializeUser(( user, done)=>done(null,user.id))
     passport.deserializeUser((ID, done)=>{ 
         return done(null,async()=>{await getUserByID(ID)})
     })
-    
-  /*  //ASYNC ALL THE THINGS!!
-passport.deserializeUser(async (ID, done) => {
-    try {
-      let user = await DbUser.findOne({ID:ID});
-      if (!user) {
-        return done(new Error('user not found'));
-      }
-      done(null, user);
-    } catch (e) {
-      done(e);
-    }
-  });*/
-    
 
-   /* passport.deserializeUser((ID, done)=>{ 
-        return done(null, async()=> {return getUserByID(ID)})
-    })*/
 }
 
 module.exports =initialize

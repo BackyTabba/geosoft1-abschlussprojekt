@@ -8,7 +8,6 @@ const Fahrt = require("./models/fahrt.model")
 const app=express();
 const sessionStorage= require("node-sessionstorage");
 
-const c = require('config');
 ArztRouter.use(express.json());
 ArztRouter.use(express.urlencoded({ extended: false }))
 UserRouter.use(express.json());

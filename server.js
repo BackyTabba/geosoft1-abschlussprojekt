@@ -41,14 +41,12 @@ const initializePassport = require("./passport-config");
 const { User } = require("./models/user.model");
 initializePassport(
   passport,
-  //name=> users.find(user => user.name === name),
   async (name) => { return await FindUserByName(name) },
-  //id => users.find(user => user.id === id)
   async (ID) => { return await FindUserByID(ID) }
 )
 
 
-//Irgendwie nach der Anmeldung:
+//Nach der Anmeldung:
 async function postLogin(a) {
   sessionStorage.setItem("ID", a.ID);
   sessionStorage.setItem("name", a.name);
@@ -66,33 +64,16 @@ async function postLogin(a) {
     sessionStorage.setItem("Role", "Admin")
   }
 }
-
-
-//--------------------------------------------------------------------
-
-
+//Funktion um UserByID zu finden (Mongoose)
 async function FindUserByID(ID) {
   return await DbUser.findOne({ ID: ID }).exec();
 }
-
-//const doc = await Band.findOne({ name: "Guns N' Roses" }); // works
-
-
-
+//Funktion um FindUserByName zu finden (Mongoose)
 async function FindUserByName(Name) {
   return await (await DbUser.findOne({ name: Name }))
 }
 
-function CreateUser(data) {
-  DbUser.create(data);
-}
-//DbUser.create({ name: 'fluffy',password:"12345",email:"qaaaaaaaaa@q",ID:1234566 });
-
-//--------------------------------------------------------------------
-
 app.use(express.urlencoded({ extended: false }))
-
-
 app.use("/css", express.static(__dirname + "/src/css"));
 app.use("/javascripts", express.static(__dirname + "/src/javascripts"));
 app.use("/icons", express.static(__dirname + "/src/icons"));
@@ -100,8 +81,7 @@ app.use('/jquery', (req, res) => { res.sendFile(__dirname + "/node_modules/jquer
 app.use('/leaflet', express.static(__dirname + '/node_modules/leaflet/dist'));
 app.use('/bootstrap', express.static(__dirname + '/node_modules/bootstrap/dist'));
 
-
-//Pfade und Router
+//Pfade der Router
 app.use("/User",checkAuthenticated , UserRouter, express.static(__dirname + "/src/html/user"));
 app.use("/Arzt",checkArzt,  ArztRouter, express.static(__dirname + "/src/html/arzt"));
 app.use("/Admin",checkAdmin,  AdminRouter);
@@ -114,26 +94,21 @@ app.use(session({
 }))
 app.use(passport.initialize())
 app.use(passport.session())
-app.use(methodOverride("_method"))
+app.use(methodOverride("_method")) //Für Logout
 
 app.get("/", checkAuthenticated, (req, res) => {
-  res.redirect("/" + sessionStorage.getItem("Role"));
+  res.redirect("/" + sessionStorage.getItem("Role")); //Weiterleitung abhängig von der Rolle
   res.sendFile(__dirname + "/src/html/index.html")
 })
 
+//Emailschnittstelle (ungetestet)
 app.post("/arzt/risikofahrt", MeldeRisikoFahrt);
+//Login
 app.get("/login", checkNotAuthenticated, (req, res) => {
   res.sendFile(__dirname + "/src/html/login.html");
 })
-/*
-app.post("/login",checkNotAuthenticated ,passport.authenticate("local",
-{
-    successRedirect: "/",
-    failureRedirect: "/login",
-    failureFlash: true
-}))
-*/
 
+//Authentifizierung von Passport
 app.post('/login', checkNotAuthenticated, function (req, res, next) {
   passport.authenticate("local", function (err, user, info) {
     if (err) { return next(err); }
@@ -150,15 +125,17 @@ app.post('/login', checkNotAuthenticated, function (req, res, next) {
 });
 
 
-
+//Registrierung
 app.get("/register", checkNotAuthenticated, (req, res) => {
   res.sendFile(__dirname + "/src/html/register.html");
 })
-app.get("/test", wrapper);
+//Testmodul um Dinge zu Testen 
+//app.get("/test", wrapper);
+
+//Registrierung Post
 app.post("/register", checkNotAuthenticated, async (req, res) => {
   try {
     const hashedPassword = await bcrypt.hash(req.body.password, 12)
-    //users.push({
     CreateUser({
       ID: Date.now().toString(),
       name: req.body.name,
@@ -174,7 +151,7 @@ app.post("/register", checkNotAuthenticated, async (req, res) => {
   }
   console.log(users)
 })
-
+//Logout
 app.delete("/logout", (req, res) => {
   sessionStorage.removeItem("Role");
   req.logOut()
@@ -183,7 +160,7 @@ app.delete("/logout", (req, res) => {
 
 
 
-
+//Risikofahrt ermitteln mit Emailbenachrichtigung (ungetestet)
 async function MeldeRisikoFahrt(req, res, next) {
   //1)
   a = await DbFahrt.find({FahrtID:req.ID},{new:true}).exec();
@@ -210,7 +187,7 @@ async function MeldeRisikoFahrt(req, res, next) {
 }
 
 
-
+//Ist Benutzer angemeldet?
 function checkAuthenticated(req, res, next) {
   if (!(sessionStorage.getItem("Role")==undefined)) {
     console.log("User Authenticated")
@@ -226,6 +203,7 @@ function checkAuthenticated(req, res, next) {
 }
 
 
+//Ist Benutzer nicht angemeldet? Session muss gespeichert werden, sonst wird endlos redirected...
 
 function checkNotAuthenticated(req, res, next) {
 
@@ -241,34 +219,9 @@ function wrapper(req, res, next) {
 
 
   console.log(a, b);
-
-
-  // user = await DbUser.findOneByName(name);
-  //console.log(DbUser);
-  //FindUserByID(1600789791848,(abc)=>{res.json(abc)});
-  /*{
-      ID: Date.now().toString(),
-      name: "qqqqqqqqqqq",
-      email: "q@qqqqqqqq",
-      password: 123456323778,
-      IsInfiziert:false,
-      IsArzt:false,
-      IsAdmin:false
-    }*/
-  //next();
 }
-async function testa(req, res, next) {
-  DbUser.find({ name: { $regex: "^A" } }).
-    then(DbUsers => {
-      console.log(DbUsers[0].name); // 'A'
-      res.send(DbUsers);
-      return DbUser.find({ name: { $regex: "^B" } });
-    }).
-    then(DbUsers => {
-      console.log(DbUsers[1].name); // 'B'
-      res.send(DbUsers);
-    });
-}
+
+// Ist Rolle = Arzt?
 function checkArzt(req, res, next) {
   if (!(sessionStorage.getItem("IsArzt") || sessionStorage.getItem("IsAdmin"))) {
     res.redirect("/")
@@ -276,6 +229,8 @@ function checkArzt(req, res, next) {
     next();
   }
 }
+
+// Ist Rolle = Admin?
 function checkAdmin(req, res, next) {
   if (!(sessionStorage.getItem("IsAdmin"))) {
     res.redirect("/")
@@ -283,48 +238,8 @@ function checkAdmin(req, res, next) {
     next();
   }
 }
-function checkArzti(req, res, next) {
-  console.log(req.user.role)
-  CreateUser({
-    id: Date.now().toString(),
-    name: "q",
-    email: "q@q",
-    password: 123456778,
-    IsInfiziert: false,
-    IsArzt: false,
-    IsAdmin: false
-  })
-  sessionStorage.setItem("key", "value");
-  sessionStorage.setItem("lala", "value");
-  sessionStorage.setItem("los", "santos");
-  console.log(sessionStorage.getItem("los"));
-  //req.session.test={hallo:"welt"};
-  // req.sessionStorage.set(val1)={val2:"val3"}
-  // console.log(""+req.session.test);
-  // console.log(""+console.req.sessionStorage)
-  if (req.user.role == undefined) req.user.role = "User"
-  req.session.save();
-  next();
-}
-//Bitte ignorieren, zukünftige Funktionen:
-//https://stackoverflow.com/questions/28741062/how-can-you-define-multiple-isauthenticated-functions-in-passport-js
-/*  function allowAdmins(req, res, next) {
-      if (req.user.role === 'Admin') return next();
-      res.redirect('/user-login');
-    }
-    
-    function allowRegular(req, res, next) {
-      if (req.user.role === 'Regular') return next();
-      res.redirect('/admin-login');
-    }*/
 
-    //db functions
-
-
-
-
-
-
+//Mongoose datenbank connection Errorhandling
 process.on("SIGTERM", () => {
   server.close();
   app.locals.dbConnection.close();
