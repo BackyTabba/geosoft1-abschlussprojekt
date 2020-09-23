@@ -20,7 +20,7 @@ geosoft1-projekt
 
 ### API- Key
 ***
-
+Kein Key notwendig
 
 ### Github Link
 ***
@@ -38,6 +38,8 @@ https://github.com/BackyTabba/geosoft1-abschlussprojekt.git
 * oder 
 * $ node . in dem Ordner zum Starten.
 * http://localhost:3000/ 
+* oder
+* $ docker-compose up
 
 ### Autorennamen
 ***
@@ -70,6 +72,9 @@ Die Autoren sind:
 * nodemon: Version 2.0.4
 * passport: Version 0.4.1
 * passport-local: Version 1.0.0
+* chai: Version 4.2.0
+* mocha: Version 8.1.3
+* supertest: Version 4.0.2
 
 
 ### Zusatzfeatures/Besonderheiten
