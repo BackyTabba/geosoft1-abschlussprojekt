@@ -19,6 +19,27 @@ var baseMaps = {
   "WSM": worldStreetMap
 };
 
+/**
+ * @desc Funktion um die Marker der MetroStations auf der Karte zu erstellen
+ *
+ * @param array - Array, gefüllt mit den MetroStations im Radius
+ */
+function addMarkers(array){
+  //Die Marker vom letzten mal löschen
+  markerGroup.clearLayers();
+
+  //Hilfsarray um Lat und Long zu tauschen
+  var correctArray = [];
+  for(var i = 0; i < array.length; i++){
+    correctArray.push(['']);
+    correctArray[i][0]= array[i][1][0];
+    correctArray[i][1]= array[i][1][1];
+    //Erstellen der Marker und hinzufügen zur Karte
+    markerGroup.addLayer(L.marker(correctArray[i]).bindPopup(array[i][0]).on('click', onClick));
+  }
+
+}
+
 //Icon für den User-Standort
 var positionMarker = L.icon({
   iconUrl: "../../icons/icon_location.png",

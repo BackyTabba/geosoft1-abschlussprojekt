@@ -125,7 +125,7 @@ function showArrivals(response){
 
 function errorcallback(e) {
 
-    document.getElementById("anzeigeFahrten").innerHTML = "errorcallback: check web-console";
+    document.getElementById("anzeigeAbfahrten").innerHTML = "errorcallback: check web-console";
 }
 
 function loadcallback() {
@@ -148,7 +148,7 @@ function saveGastFahrt(id){
   gastfahrtinfo.einstiegszeit=ApiArray2[id][2];
   gastfahrtinfo.endstation=ApiArray2[id][1];
   console.log(gastfahrtinfo);
-  $.post( "http://localhost:3000/user/AddUserToFahrt",[gastfahrtinfo])
+  $.post("localhost:3000/user/AddUserToFahrt",[gastfahrtinfo])
   saveFahrt(id);
 /**
 $.ajax({
@@ -172,7 +172,7 @@ function saveFahrt(id){
   fahrtinfo.lininenname=ApiArray2[id][0];
   console.log(fahrtinfo);
 
-  $.post( "http://localhost:3000/user/AddFahrt",[fahrtinfo])
+  $.post( "localhost:3000/user/AddFahrt",[fahrtinfo])
   document.getElementById("tableBody").innerHTML = "";
   document.getElementById("anzeigeAbfahrten").style.display = "none";
 }

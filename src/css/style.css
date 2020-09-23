@@ -2,6 +2,7 @@
 #mapBisherigeFahrten { height: 420px; }
 #mapFahrtensuche { height: 420px; }
 #anzeigeAbfahrten { display: none;}
+#anzeigeFahrten { display: none;}
 
   body{
             margin: 30px;

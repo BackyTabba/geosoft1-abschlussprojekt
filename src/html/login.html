@@ -1,0 +1,129 @@
+<<<<<<< HEAD
+<html><h1>Login</h1>
+<form action="/login" method="POST">
+    <div>
+        <label for="name">Name</label>
+        <input type="text" id="name" name="name" required>
+    </div>
+    <div>
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password">
+    </div>
+    <button type="submit">Login</button>
+</form>
+
+<a href="/register">Register</a>
+=======
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width= device-width, initial-scale=1">
+    <title>Login</title>
+     <style>
+      body{
+            margin: 30px;
+            background-color: lightgrey;
+        }
+        h1{
+            color: navy;
+            margin-left: 50px;
+            font-size: 40px;
+        }
+
+        h2{
+            margin-left: 500px;
+            font-size: 30px;
+        }
+        
+
+        .my-container {
+            border: 1px solid black;
+        }
+        
+        }
+        .my-col{
+            border: 3px solid black;
+        }
+
+        .table-image{
+            td, th{
+                vertical-align: middle;
+            }
+        }
+        .navbar{
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          background: #333;
+          color: white;
+        }
+        
+        .navbar-links li{
+          list-style: none;
+        }
+        .navbar-links li a{
+          text-decoration: none;
+          color:white;
+          padding: 1rem;
+          display: block;
+        }
+        .toggle-button{
+          position: absolute;
+          top: .75rem;
+          right: 1rem;
+          display: none;
+          flex-direction: column;
+          justify-content: space-between;
+          width:31px;
+          height:21px;
+
+        }
+        .toggle-button .bar{
+          height: 3px;
+          width: 100%;
+          background-color: white;
+          border-radius: 10px;
+        }
+        @media (max-width: 600px){
+          .toggle-button{
+            display: flex;
+          }
+          .navbar-links{
+            display: none;
+          }
+
+        }
+    </style>    
+</head>
+<body>
+ <nav class="navbar navbar-style navbar-expand-md">
+   <a href="#" class="toggle-button">
+     <span class="bar"></span>
+     <span class="bar"></span>
+     <span class="bar"></span>
+   </a> 
+   <div class="navbar-links">
+    <ul>
+      <li><a href="#">Home</li>
+      <li><a href="#">Login</li>
+      <li><a href="#">Register</a></li>  
+    </ul>
+   </div>
+  </nav> 
+
+    <h1 style="font-size: 2vw; text-align: center">Login</h1>
+   
+    <form>
+      <label for="loginName">Name:</label><br>
+      <textarea id="loginName"></textarea><br>
+      <label for="loginPasswort">Passwort:</label><br>
+      <textarea id="loginPasswort"></textarea><br>
+      <input type='button' id='loginBtn' value="Submit">
+      <input type='button' id="gotoRegBtn" value="Create new Account" href="registration.html">
+    </form>
+
+</body>
+>>>>>>> origin/api
+</html>
