@@ -298,3 +298,5 @@ package-lock
 
 *#
 .#*
+*.lock
+*.wt
