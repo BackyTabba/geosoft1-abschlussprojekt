@@ -129,14 +129,14 @@ app.post('/login', checkNotAuthenticated, function (req, res, next) {
 app.get("/register", checkNotAuthenticated, (req, res) => {
   res.sendFile(__dirname + "/src/html/register.html");
 })
-//Testmodul um Dinge zu Testen 
+//Testmodul um Dinge zu Testen
 //app.get("/test", wrapper);
 
 //Registrierung Post
 app.post("/register", checkNotAuthenticated, async (req, res) => {
   try {
     const hashedPassword = await bcrypt.hash(req.body.password, 12)
-    CreateUser({
+    let user = new DbUser({
       ID: Date.now().toString(),
       name: req.body.name,
       email: req.body.email,
@@ -144,7 +144,8 @@ app.post("/register", checkNotAuthenticated, async (req, res) => {
       IsInfiziert: false,
       IsArzt: false,
       IsAdmin: false
-    })
+    });
+    user.save();
     res.redirect("/login")
   } catch(e){
     res.redirect("/register")
@@ -253,5 +254,3 @@ process.on("SIGINT", () => {
   console.log("SIGINT");
   process.exit(0);
 });
-
-
