@@ -36,7 +36,17 @@ ArztRouter.post("/FindUserByID", async function(req,res,next) { //http post http
 AdminRouter.post("/CreateUser", function(req,res,next) {
     DbUser.create(req.body,function(err,user){
         if (err){
-           res.send(err);
+           //res.send(err);
+        }
+        if(user) {
+           res.json(user);
+        }})
+        next();
+})
+AdminRouter.post("/CreateFahrt", function(req,res,next) {
+    DbFahrt.create(req.body,function(err,user){
+        if (err){
+           //res.send(err);
         }
         if(user) {
            res.json(user);
@@ -72,13 +82,14 @@ ArztRouter.put("/SetUserRiskFalse", async function(req, res,next) { //http put h
 UserRouter.post("/AddFahrt", async function(req,res,next) {
     a= sessionStorage.getItem("ID");
     req.body={GastID:a,...req.body};
-    await DbGastFahrt.create(req.body,function(err,user){
+    a= await DbGastFahrt.create(req.body,function(err,user){
         if (err){
-           res.send(err);
+       // res.send(err);
         }
         if(user) {
-           res.json(user);
+         //res.json(user);
         }})
+        res.send(a);
         next();
 })
 
@@ -92,7 +103,7 @@ ArztRouter.put("/SetFahrtRiskTrue",async function (req, res,next) {SetFahrtRiskT
 
         
         //finde alle Mitfahrer
-       b= await DbGastFahrt.find({FahrtID:fahrt.FahrtID}).exec()
+       b= await DbGastFahrt.find({FahrtID:a.FahrtID}).exec()
             
             for(x in b){
                 //setze bei jedem IsInfiziert=true

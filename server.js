@@ -147,10 +147,11 @@ app.post("/register", checkNotAuthenticated, async (req, res) => {
     });
     user.save();
     res.redirect("/login")
+    console.log(user)
   } catch(e){
     res.redirect("/register")
   }
-  console.log(users)
+  
 })
 //Logout
 app.delete("/logout", (req, res) => {
